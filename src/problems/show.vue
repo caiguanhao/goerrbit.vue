@@ -19,7 +19,7 @@
   </div>
 
   <div class="d-flex">
-    <template v-if="nav.Older !== null && nav.Newer !== null">
+    <template v-if="!(nav.Older === null && nav.Newer === null)">
       <div class="me-3">
         <span v-if="nav.Older === null">← Older</span>
         <router-link v-else v-bind:to="{ name: 'RouteNoticesShow',
@@ -120,7 +120,7 @@
   </div>
 
   <h4 class="border-bottom pb-1 my-3">Backtrace</h4>
-  <div class="p-3 bg-light border rounded-3 mb-4">
+  <div class="p-3 bg-light border rounded-3 mb-4 small">
     <div v-for="b in notice.Backtraces">
       <span v-text="b.File"></span>
       <span v-if="b.Number" v-text="':' + b.Number"></span>
@@ -130,6 +130,7 @@
     </div>
   </div>
 
+  <template v-if="hasUserAttributes">
   <h4 class="border-bottom pb-1 my-3">User</h4>
   <div class="table-responsive">
     <table class="table table-bordered">
@@ -141,6 +142,7 @@
       </tbody>
     </table>
   </div>
+  </template>
 
   <h4 class="border-bottom pb-1 my-3">Environment</h4>
   <div class="table-responsive">
@@ -180,6 +182,14 @@ export default {
       problem: {},
       notice: {},
       nav: {}
+    }
+  },
+  computed: {
+    hasUserAttributes () {
+      for (let key in this.notice.UserAttributes) {
+        return true
+      }
+      return false
     }
   },
   methods: {
