@@ -18,6 +18,24 @@
     </div>
   </div>
 
+  <div class="d-flex">
+    <template v-if="nav.Older !== null && nav.Newer !== null">
+      <div class="me-3">
+        <span v-if="nav.Older === null">← Older</span>
+        <router-link v-else v-bind:to="{ name: 'RouteNoticesShow',
+          params: { id: app.Id, pid: problem.Id, nid: nav.Older } }">← Older</router-link>
+      </div>
+      <div class="me-3">
+        <span v-if="nav.Newer === null">Newer →</span>
+        <router-link v-else v-bind:to="{ name: 'RouteNoticesShow',
+          params: { id: app.Id, pid: problem.Id, nid: nav.Newer } }">Newer →</router-link>
+      </div>
+    </template>
+    <div>
+      viewing occurrence <span v-if="nav.Number" v-text="nav.Number"></span> of <span v-text="problem.NoticesCount"></span>
+    </div>
+  </div>
+
   <h4 class="border-bottom pb-1 my-3">Summary</h4>
   <div class="table-responsive">
     <table class="table table-bordered">
@@ -147,41 +165,70 @@
 import * as timeago from 'timeago.js'
 import http from '../http'
 
+function makeRequests (params) {
+  return Promise.all([
+    http.get(`/apps/${params.id}`),
+    http.get(`/apps/${params.id}/problems/${params.pid}`),
+    params.nid ? http.get(`/apps/${params.id}/problems/${params.pid}/notices/${params.nid}`) : Promise.resolve()
+  ])
+}
+
 export default {
   data () {
     return {
       app: {},
       problem: {},
-      notice: {}
+      notice: {},
+      nav: {}
+    }
+  },
+  methods: {
+    load () {
+      http.get(`/apps/${this.app.Id}/problems/${this.problem.Id}/notices/${this.notice.Id}/nav`).then(res => {
+        this.nav = res.data.Nav
+      })
     }
   },
   beforeRouteEnter (to, from, next) {
-    Promise.all([
-      http.get(`/apps/${to.params.id}`),
-      http.get(`/apps/${to.params.id}/problems/${to.params.pid}`)
-    ]).then(res => {
+    makeRequests(to.params).then(res => {
       const app = res[0].data.App
       const problem = res[1].data.Problem
+      if (res[2]) {
+        next(vm => {
+          vm.app = app
+          vm.problem = problem
+          vm.notice = res[2].data.Notice
+          vm.load()
+        })
+        return
+      }
       return http.get(`/apps/${to.params.id}/problems/${to.params.pid}/notices/${problem.LastNoticeId}`).then(res => {
         next(vm => {
           vm.app = app
           vm.problem = problem
           vm.notice = res.data.Notice
+          vm.load()
         })
       })
     }, next)
   },
   beforeRouteUpdate (to, from, next) {
-    Promise.all([
-      http.get(`/apps/${to.params.id}`),
-      http.get(`/apps/${to.params.id}/problems/${to.params.pid}`)
-    ]).then(res => {
+    makeRequests(to.params).then(res => {
       const app = res[0].data.App
       const problem = res[1].data.Problem
+      if (res[2]) {
+        this.app = app
+        this.problem = problem
+        this.notice = res[2].data.Notice
+        this.load()
+        next()
+        return
+      }
       return http.get(`/apps/${to.params.id}/problems/${to.params.pid}/notices/${problem.LastNoticeId}`).then(res => {
         this.app = app
         this.problem = problem
         this.notice = res.data.Notice
+        this.load()
         next()
       })
     }, next)

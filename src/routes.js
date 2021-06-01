@@ -10,7 +10,16 @@ const router = createRouter({
   routes: [
     { path: '/', name: 'RouteHome', component: RouteApps, alias: [ '/apps' ] },
     { path: '/apps/:id', name: 'RouteAppsShow', component: RouteAppsShow },
-    { path: '/apps/:id/problems/:pid', name: 'RouteProblemsShow', component: RouteProblemsShow },
+    {
+      path: '/apps/:id/problems/:pid/notices/:nid',
+      name: 'RouteNoticesShow',
+      component: RouteProblemsShow
+    },
+    {
+      path: '/apps/:id/problems/:pid',
+      name: 'RouteProblemsShow',
+      component: RouteProblemsShow
+    },
     { path: '/error', name: 'RouteError', component: RouteError },
     { path: '/:pathMatch(.*)*', component: RouteError }
   ],
