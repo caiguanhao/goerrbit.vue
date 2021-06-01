@@ -18,7 +18,8 @@
         <tr v-for="problem in problems">
           <td v-text="problem.Environment"></td>
           <td>
-            <div v-text="problem.Message"></div>
+            <router-link v-bind:to="{ name: 'RouteProblemsShow', params: { id: app.Id, pid: problem.Id } }"
+              v-text="problem.Message"></router-link>
             <div class="small fst-italic text-muted" v-text="problem.Location"></div>
           </td>
           <td>

@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 import RouteApps from './apps/index.vue'
 import RouteAppsShow from './apps/show.vue'
+import RouteProblemsShow from './problems/show.vue'
 import RouteError from './errors/index.vue'
 
 const router = createRouter({
@@ -9,6 +10,7 @@ const router = createRouter({
   routes: [
     { path: '/', name: 'RouteHome', component: RouteApps, alias: [ '/apps' ] },
     { path: '/apps/:id', name: 'RouteAppsShow', component: RouteAppsShow },
+    { path: '/apps/:id/problems/:pid', name: 'RouteProblemsShow', component: RouteProblemsShow },
     { path: '/error', name: 'RouteError', component: RouteError },
     { path: '/:pathMatch(.*)*', component: RouteError }
   ],
