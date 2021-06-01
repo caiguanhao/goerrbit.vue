@@ -41,14 +41,14 @@ export default {
   },
   beforeRouteUpdate (to, from, next) {
     if (!router.$lastRoute) {
-      next({ name: 'RouteApps' })
+      next({ name: 'RouteHome' })
       return
     }
     next()
   },
   beforeRouteEnter (to, from, next) {
     if (!router.$lastRoute) {
-      next({ name: 'RouteApps' })
+      next({ name: 'RouteHome' })
       return
     }
     next()
