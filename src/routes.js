@@ -2,6 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 import RouteApps from './apps/index.vue'
 import RouteAppsShow from './apps/show.vue'
+import RouteAppsNew from './apps/new.vue'
+import RouteAppsEdit from './apps/edit.vue'
 import RouteProblemsShow from './problems/show.vue'
 import RouteError from './errors/index.vue'
 
@@ -9,7 +11,9 @@ const router = createRouter({
   history: createWebHistory(),
   routes: [
     { path: '/', name: 'RouteHome', component: RouteApps, alias: [ '/apps' ] },
+    { path: '/apps/new', name: 'RouteAppsNew', component: RouteAppsNew },
     { path: '/apps/:id', name: 'RouteAppsShow', component: RouteAppsShow },
+    { path: '/apps/:id/edit', name: 'RouteAppsEdit', component: RouteAppsEdit },
     {
       path: '/apps/:id/problems/:pid/notices/:nid',
       name: 'RouteNoticesShow',

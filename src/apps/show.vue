@@ -1,8 +1,21 @@
 <template>
-  <div class="p-3 bg-light border rounded-3 mb-4">
-    <h4 v-text="app.Name"></h4>
-    <div class="small"><strong>API Key: </strong><span v-text="app.ApiKey"></span></div>
+  <div class="p-3 bg-light border rounded-3 mb-4 d-sm-flex align-items-center justify-content-between">
+    <div class="mb-3 mb-sm-0">
+      <h4 v-text="app.Name"></h4>
+      <div class="small">
+        <strong>Errors Caught:</strong> <span v-text="app.ProblemsCount"></span>
+        <strong class="ms-3">API Key:</strong> <span v-text="app.ApiKey"></span>
+      </div>
+    </div>
+    <div>
+      <router-link v-bind:to="{ name: 'RouteAppsEdit', params: { id: app.Id } }" class="btn btn-primary">Edit</router-link>
+    </div>
   </div>
+  <template v-if="pagination.TotalCount === 0">
+    <h3 class="mb-3">No errors have been caught yet, make sure you set up your app</h3>
+    <pre class="p-3 bg-light border rounded-3 mb-4" v-text="rubyCode"></pre>
+  </template>
+  <template v-else>
   <div class="d-sm-flex align-items-center justify-content-between">
     <h4 class="mb-3">Errors</h4>
     <form class="mb-3" v-on:submit.prevent="search">
@@ -41,6 +54,7 @@
     </table>
   </div>
   <Pagination v-bind:pagination="pagination" />
+  </template>
 </template>
 
 <script>
@@ -58,6 +72,29 @@ export default {
       problems: [],
       pagination: {},
       query: null
+    }
+  },
+  computed: {
+    rubyCode () {
+      let host = `${window.location.protocol}//${window.location.host}`
+      return `# Require the airbrake gem in your App.
+# ---------------------------------------------
+#
+# Ruby - In your Gemfile
+# gem 'airbrake', '~> 5.0'
+#
+# Then add the following to config/initializers/errbit.rb
+# -------------------------------------------------------
+
+Airbrake.configure do |config|
+  config.host = '${host}'
+  config.project_id = 1 # required, but any positive integer works
+  config.project_key = '${this.app.ApiKey}'
+
+  # Uncomment for Rails apps
+  # config.environment = Rails.env
+  # config.ignore_environments = %w(development test)
+end`
     }
   },
   methods: {
