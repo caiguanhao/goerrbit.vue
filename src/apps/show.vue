@@ -11,7 +11,7 @@
       <router-link v-bind:to="{ name: 'RouteAppsEdit', params: { id: app.Id } }" class="btn btn-primary">Edit</router-link>
     </div>
   </div>
-  <template v-if="pagination.TotalCount === 0">
+  <template v-if="hasNoProblems && !isSearch">
     <h3 class="mb-3">No errors have been caught yet, make sure you set up your app</h3>
     <pre class="p-3 bg-light border rounded-3 mb-4" v-text="rubyCode"></pre>
   </template>
@@ -25,6 +25,10 @@
       </div>
     </form>
   </div>
+  <template v-if="hasNoProblems && isSearch">
+    <h3>No errors matched your query</h3>
+  </template>
+  <template v-else>
   <div class="table-responsive">
     <table class="table">
       <thead>
@@ -36,7 +40,8 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="problem in problems" class="clickable-row">
+        <tr v-for="problem in problems" class="clickable-row"
+          v-bind:class="{ highlighted: lastProblemId === problem.Id }">
           <td v-text="problem.Environment"></td>
           <td>
             <router-link v-bind:to="{ name: 'RouteProblemsShow', params: { id: app.Id, pid: problem.Id } }"
@@ -57,6 +62,7 @@
   </div>
   <Pagination v-bind:pagination="pagination" />
   </template>
+  </template>
 </template>
 
 <script>
@@ -73,10 +79,17 @@ export default {
       app: {},
       problems: [],
       pagination: {},
-      query: null
+      query: null,
+      lastProblemId: null
     }
   },
   computed: {
+    isSearch () {
+      return !!this.$route.query.query
+    },
+    hasNoProblems () {
+      return this.pagination.TotalCount === 0
+    },
     rubyCode () {
       let host = `${window.location.protocol}//${window.location.host}`
       return `# Require the airbrake gem in your App.
@@ -105,6 +118,11 @@ end`
     },
     search () {
       this.$router.push({ name: this.$route.name, query: { query: this.query || undefined } })
+    },
+    load () {
+      this.lastProblemId = window.lastProblemId
+      window.lastProblemId = null
+      window.lastAppId = this.app.Id
     }
   },
   beforeRouteEnter (to, from, next) {
@@ -117,6 +135,7 @@ end`
         vm.problems = res[1].data.Problems
         vm.pagination = res[1].data.Pagination
         vm.query = to.query.query
+        vm.load()
       })
     }, next)
   },
@@ -129,6 +148,7 @@ end`
       this.problems = res[1].data.Problems
       this.pagination = res[1].data.Pagination
       this.query = to.query.query
+      this.load()
       next()
     }, next)
   }

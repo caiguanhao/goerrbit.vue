@@ -8,6 +8,13 @@ import RouteProblemsShow from './problems/show.vue'
 import RouteError from './errors/index.vue'
 
 const router = createRouter({
+  scrollBehavior (to, from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition
+    } else {
+      return { top: 0 }
+    }
+  },
   history: createWebHistory(),
   routes: [
     { path: '/', name: 'RouteHome', component: RouteApps, alias: [ '/apps' ] },

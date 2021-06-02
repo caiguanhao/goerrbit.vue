@@ -194,6 +194,10 @@ export default {
   },
   methods: {
     load () {
+      this.getNav()
+      window.lastProblemId = this.problem.Id
+    },
+    getNav () {
       http.get(`/apps/${this.app.Id}/problems/${this.problem.Id}/notices/${this.notice.Id}/nav`).then(res => {
         this.nav = res.data.Nav
       })

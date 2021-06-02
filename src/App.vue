@@ -67,4 +67,17 @@ main > .container {
 .clickable-row:hover {
   background: #f1f1f1;
 }
+
+@keyframes background-fade-highlight {
+  0% {
+    background-color: #d1f0ff;
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+.highlighted {
+  animation: background-fade-highlight 2.5s ease-out;
+}
 </style>

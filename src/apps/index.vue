@@ -17,7 +17,8 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="app in apps" class="clickable-row">
+        <tr v-for="app in apps" class="clickable-row"
+          v-bind:class="{ highlighted: lastAppId === app.Id }">
           <td v-text="app.Id"></td>
           <td>
             <router-link v-bind:to="{ name: 'RouteAppsShow', params: { id: app.Id } }"
@@ -40,19 +41,28 @@ import http from '../http'
 export default {
   data () {
     return {
-      apps: []
+      apps: [],
+      lastAppId: null
+    }
+  },
+  methods: {
+    load () {
+      this.lastAppId = window.lastAppId
+      window.lastAppId = null
     }
   },
   beforeRouteEnter (to, from, next) {
     http.get('/apps', { params: to.query }).then(res => {
       next(vm => {
         vm.apps = res.data.Apps
+        vm.load()
       })
     }, next)
   },
   beforeRouteUpdate (to, from, next) {
     http.get('/apps', { params: to.query }).then(res => {
       this.apps = res.data.Apps
+      this.load()
       next()
     }, next)
   }
