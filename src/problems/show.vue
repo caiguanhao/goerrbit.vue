@@ -19,7 +19,7 @@
   </div>
 
   <div class="d-flex">
-    <template v-if="!(nav.Older === null && nav.Newer === null)">
+    <template v-if="nav && !(nav.Older === null && nav.Newer === null)">
       <div class="me-3">
         <span v-if="nav.Older === null">← Older</span>
         <router-link v-else v-bind:to="{ name: 'RouteNoticesShow',
@@ -32,7 +32,7 @@
       </div>
     </template>
     <div>
-      viewing occurrence <span v-if="nav.Number" v-text="nav.Number"></span> of <span v-text="problem.NoticesCount"></span>
+      viewing occurrence <span v-if="nav && nav.Number" v-text="nav.Number"></span> of <span v-text="problem.NoticesCount"></span>
     </div>
   </div>
 
@@ -181,7 +181,7 @@ export default {
       app: {},
       problem: {},
       notice: {},
-      nav: {}
+      nav: null
     }
   },
   computed: {
