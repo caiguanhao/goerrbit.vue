@@ -13,7 +13,7 @@
       </div>
       <div class="col-sm-2">
         <div class="form-control-plaintext">
-          <a href v-on:click.prevent="obj.ApiKey = generateKey()">Regenerate</a>
+          <a href v-on:click.prevent="generateApiKey">Regenerate</a>
         </div>
       </div>
     </div>
@@ -120,13 +120,13 @@ export default {
     }
   },
   methods: {
-    generateKey () {
+    generateApiKey () {
       let key = []
       let chars = 'abcdef0123456789'
       for (let i = 0; i < 32; i++) {
         key.push(chars.charAt(Math.floor(Math.random() * 16)))
       }
-      return key.join('')
+      this.obj.ApiKey = key.join('')
     },
     submit () {
       this.loading = true
