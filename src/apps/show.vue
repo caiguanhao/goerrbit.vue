@@ -36,7 +36,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="problem in problems">
+        <tr v-for="problem in problems" class="clickable-row">
           <td v-text="problem.Environment"></td>
           <td>
             <router-link v-bind:to="{ name: 'RouteProblemsShow', params: { id: app.Id, pid: problem.Id } }"

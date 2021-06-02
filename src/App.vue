@@ -35,10 +35,36 @@
 </template>
 
 <script>
+export default {
+  created () {
+    document.addEventListener('click', (e) => {
+      if (window.getSelection().toString().length) return
+      let el = e.target
+      while (el) {
+        let node = el.nodeName
+        if (node === 'A' || node === 'BUTTON' || node === 'INPUT') return
+        if (el.classList && el.classList.contains('clickable-row')) {
+          let elem = el.querySelector('a.clickable-row-target') || el.querySelector('input[type=checkbox]') || el.querySelector('a')
+          if (elem) elem.click()
+          return
+        }
+        el = el.parentNode
+      }
+    })
+  }
+}
 </script>
 
 <style>
 main > .container {
   padding-top: 80px;
+}
+
+.clickable-row {
+  cursor: pointer;
+}
+
+.clickable-row:hover {
+  background: #f1f1f1;
 }
 </style>

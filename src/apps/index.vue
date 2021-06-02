@@ -17,7 +17,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="app in apps">
+        <tr v-for="app in apps" class="clickable-row">
           <td v-text="app.Id"></td>
           <td>
             <router-link v-bind:to="{ name: 'RouteAppsShow', params: { id: app.Id } }"
