@@ -29,10 +29,10 @@
     <table class="table">
       <thead>
         <tr>
-          <th>ENV</th>
+          <th width="200">ENV</th>
           <th>WHAT / WHERE</th>
-          <th>LATEST</th>
-          <th>COUNT</th>
+          <th width="200">LATEST</th>
+          <th width="200">COUNT</th>
         </tr>
       </thead>
       <tbody>
@@ -44,10 +44,12 @@
             <div class="small fst-italic text-muted" v-text="problem.Location"></div>
           </td>
           <td>
-            <div v-text="timeago(problem.LastNoticeAt)"></div>
+            <div class="text-nowrap" v-text="timeago(problem.LastNoticeAt)"></div>
           </td>
           <td>
-            <div v-text="problem.NoticesCount"></div>
+            <span class="badge rounded-pill"
+              v-bind:class="problem.NoticesCount === 0 ? 'bg-success' : 'bg-danger'"
+              v-text="problem.NoticesCount"></span>
           </td>
         </tr>
       </tbody>

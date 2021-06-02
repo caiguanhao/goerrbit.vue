@@ -2,7 +2,7 @@
   <div class="mb-3 border-bottom">
     <h1 class="h3">Edit App</h1>
   </div>
-  <Form class="col-sm-6" v-bind:obj="app" />
+  <Form class="col-sm-8" v-bind:obj="app" />
 </template>
 
 <script>

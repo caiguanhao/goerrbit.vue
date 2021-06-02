@@ -13,7 +13,7 @@
         <tr>
           <th width="100">#</th>
           <th>Name</th>
-          <th>Errors</th>
+          <th width="200">Errors</th>
         </tr>
       </thead>
       <tbody>
@@ -23,7 +23,11 @@
             <router-link v-bind:to="{ name: 'RouteAppsShow', params: { id: app.Id } }"
               v-text="app.Name"></router-link>
           </td>
-          <td v-text="app.ProblemsCount"></td>
+          <td>
+            <span class="badge rounded-pill"
+              v-bind:class="app.ProblemsCount === 0 ? 'bg-success' : 'bg-danger'"
+              v-text="app.ProblemsCount"></span>
+          </td>
         </tr>
       </tbody>
     </table>
