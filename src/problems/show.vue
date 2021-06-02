@@ -121,7 +121,7 @@
 
   <h4 class="border-bottom pb-1 my-3">Backtrace</h4>
   <div class="p-3 bg-light border rounded-3 mb-4 small">
-    <div v-for="b in notice.Backtraces">
+    <div class="text-nowrap" v-for="b in notice.Backtraces">
       <span v-text="b.File"></span>
       <span v-if="b.Number" v-text="':' + b.Number"></span>
       <span v-if="b.Column" v-text="':' + b.Column"></span>
