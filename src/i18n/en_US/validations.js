@@ -10,5 +10,6 @@ export default {
   string_lt: p => `length must be less than ${p}`,
   string_lte: p => `length must be less than or equal to ${p}`,
   string_ne: p => `length must not be ${p}`,
+  string_uniqueness: p => `already exists`,
   string_required: p => `must not be blank`,
 }

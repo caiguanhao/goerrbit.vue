@@ -18,6 +18,7 @@
     </div>
   </div>
 
+  <h3 v-text="notice.Message"></h3>
   <div class="d-flex">
     <template v-if="nav && !(nav.Older === null && nav.Newer === null)">
       <div class="me-3">
@@ -196,6 +197,7 @@ export default {
     load () {
       this.getNav()
       window.lastProblemId = this.problem.Id
+      window.lastAppId = this.app.Id
     },
     getNav () {
       http.get(`/apps/${this.app.Id}/problems/${this.problem.Id}/notices/${this.notice.Id}/nav`).then(res => {

@@ -49,6 +49,7 @@ export default {
     load () {
       this.lastAppId = window.lastAppId
       window.lastAppId = null
+      window.lastProblemId = null
     }
   },
   beforeRouteEnter (to, from, next) {
