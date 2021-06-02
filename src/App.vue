@@ -15,6 +15,10 @@
               <router-link class="nav-link" active-class="active"
                 v-bind:to="{ name: 'RouteHome' }">Apps</router-link>
             </li>
+            <li class="nav-item">
+              <router-link class="nav-link" active-class="active"
+                v-bind:to="{ name: 'RouteProblems' }">Errors</router-link>
+            </li>
           </ul>
         </div>
       </div>

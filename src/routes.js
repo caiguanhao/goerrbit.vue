@@ -4,6 +4,7 @@ import RouteApps from './apps/index.vue'
 import RouteAppsShow from './apps/show.vue'
 import RouteAppsNew from './apps/new.vue'
 import RouteAppsEdit from './apps/edit.vue'
+import RouteProblems from './problems/index.vue'
 import RouteProblemsShow from './problems/show.vue'
 import RouteError from './errors/index.vue'
 
@@ -31,6 +32,7 @@ const router = createRouter({
       name: 'RouteProblemsShow',
       component: RouteProblemsShow
     },
+    { path: '/errors', name: 'RouteProblems', component: RouteProblems },
     { path: '/error', name: 'RouteError', component: RouteError },
     { path: '/:pathMatch(.*)*', component: RouteError }
   ],

@@ -29,58 +29,25 @@
     <h3>No errors matched your query</h3>
   </template>
   <template v-else>
-  <div class="table-responsive">
-    <table class="table">
-      <thead>
-        <tr>
-          <th width="200">ENV</th>
-          <th>WHAT / WHERE</th>
-          <th width="200">LATEST</th>
-          <th width="200">COUNT</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="problem in problems" class="clickable-row"
-          v-bind:class="{ highlighted: lastProblemId === problem.Id }">
-          <td v-text="problem.Environment"></td>
-          <td>
-            <router-link v-bind:to="{ name: 'RouteProblemsShow', params: { id: app.Id, pid: problem.Id } }"
-              v-text="problem.Message"></router-link>
-            <div class="small fst-italic text-muted" v-text="problem.Location"></div>
-          </td>
-          <td>
-            <div class="text-nowrap" v-text="timeago(problem.LastNoticeAt)"></div>
-          </td>
-          <td>
-            <span class="badge rounded-pill"
-              v-bind:class="problem.NoticesCount === 0 ? 'bg-success' : 'bg-danger'"
-              v-text="problem.NoticesCount"></span>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  <Pagination v-bind:pagination="pagination" />
+    <Problems v-bind:problems="problems" v-bind:pagination="pagination" />
   </template>
   </template>
 </template>
 
 <script>
-import * as timeago from 'timeago.js'
 import http from '../http'
-import Pagination from '../components/pagination.vue'
+import Problems from '../components/problems.vue'
 
 export default {
   components: {
-    Pagination
+    Problems
   },
   data () {
     return {
       app: {},
       problems: [],
       pagination: {},
-      query: null,
-      lastProblemId: null
+      query: null
     }
   },
   computed: {
@@ -113,16 +80,8 @@ end`
     }
   },
   methods: {
-    timeago (time) {
-      return timeago.format(time)
-    },
     search () {
       this.$router.push({ name: this.$route.name, query: { query: this.query || undefined } })
-    },
-    load () {
-      this.lastProblemId = window.lastProblemId
-      window.lastProblemId = null
-      window.lastAppId = this.app.Id
     }
   },
   beforeRouteEnter (to, from, next) {
@@ -135,7 +94,6 @@ end`
         vm.problems = res[1].data.Problems
         vm.pagination = res[1].data.Pagination
         vm.query = to.query.query
-        vm.load()
       })
     }, next)
   },
@@ -148,7 +106,6 @@ end`
       this.problems = res[1].data.Problems
       this.pagination = res[1].data.Pagination
       this.query = to.query.query
-      this.load()
       next()
     }, next)
   }
