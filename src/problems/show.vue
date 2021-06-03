@@ -19,7 +19,7 @@
   </div>
 
   <h3 v-text="notice.Message"></h3>
-  <div class="d-flex">
+  <div class="d-flex mb-4">
     <template v-if="nav && !(nav.Older === null && nav.Newer === null)">
       <div class="me-3">
         <span v-if="nav.Older === null">← Older</span>
@@ -37,131 +37,164 @@
     </div>
   </div>
 
-  <h4 class="border-bottom pb-1 my-3">Summary</h4>
-  <div class="table-responsive">
-    <table class="table table-bordered">
-      <tbody>
-        <tr>
-          <td class="fw-bold" width="200">MESSAGE</td>
-          <td>
-            <table class="small">
-              <tbody>
-                <tr v-for="item in problem.Messages">
-                  <td class="pe-3" v-text="item.Percent"></td>
-                  <td class="fw-bold" v-text="item.Value"></td>
-                </tr>
-              </tbody>
-            </table>
-          </td>
-        </tr>
-        <tr>
-          <td class="fw-bold">ERROR CLASS</td>
-          <td v-text="notice.ErrorClass"></td>
-        </tr>
-        <tr>
-          <td class="fw-bold">URL</td>
-          <td v-text="notice.Url"></td>
-        </tr>
-        <tr>
-          <td class="fw-bold">WHERE</td>
-          <td v-text="notice.Location"></td>
-        </tr>
-        <tr>
-          <td class="fw-bold">OCCURRED</td>
-          <td v-text="formatTime(notice.CreatedAt)"></td>
-        </tr>
-        <tr>
-          <td class="fw-bold">SIMILAR</td>
-          <td v-text="problem.NoticesCount - 1"></td>
-        </tr>
-        <tr>
-          <td class="fw-bold">BROWSER</td>
-          <td>
-            <table class="small">
-              <tbody>
-                <tr v-for="item in problem.UserAgents">
-                  <td class="pe-3" v-text="item.Percent"></td>
-                  <td class="fw-bold" v-text="item.Value"></td>
-                </tr>
-              </tbody>
-            </table>
-          </td>
-        </tr>
-        <tr>
-          <td class="fw-bold">ORIGIN</td>
-          <td>
-            <table class="small">
-              <tbody>
-                <tr v-for="item in problem.Hosts">
-                  <td class="pe-3" v-text="item.Percent"></td>
-                  <td class="fw-bold" v-text="item.Value"></td>
-                </tr>
-              </tbody>
-            </table>
-          </td>
-        </tr>
-        <tr>
-          <td class="fw-bold">APP SERVER</td>
-          <td v-text="notice.AppServer"></td>
-        </tr>
-        <tr v-if="notice.AppVersion">
-          <td class="fw-bold">APP VERSION</td>
-          <td v-text="notice.AppVersion"></td>
-        </tr>
-        <tr v-if="notice.Framework">
-          <td class="fw-bold">FRAMEWORK</td>
-          <td v-text="notice.Framework"></td>
-        </tr>
-        <tr>
-          <td class="fw-bold">REL. DIRECTORY</td>
-          <td v-text="notice.ProjectRoot"></td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+  <ul class="nav nav-pills mb-3">
+    <li class="nav-item">
+      <button class="nav-link active" type="button"
+        data-bs-toggle="pill" data-bs-target="#page-summary">Summary</button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link" type="button"
+        data-bs-toggle="pill" data-bs-target="#page-backtrace">Backtrace</button>
+    </li>
+    <li class="nav-item" v-if="hasUserAttributes">
+      <button class="nav-link" type="button"
+        data-bs-toggle="pill" data-bs-target="#page-user">User</button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link" type="button"
+        data-bs-toggle="pill" data-bs-target="#page-environment">Environment</button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link" type="button"
+        data-bs-toggle="pill" data-bs-target="#page-parameters">Parameters</button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link" type="button"
+        data-bs-toggle="pill" data-bs-target="#page-session">Session</button>
+    </li>
+  </ul>
 
-  <h4 class="border-bottom pb-1 my-3">Backtrace</h4>
-  <div class="p-3 bg-light border rounded-3 mb-4 small">
-    <div class="text-nowrap" v-for="b in notice.Backtraces">
-      <span v-text="b.File"></span>
-      <span v-if="b.Number" v-text="':' + b.Number"></span>
-      <span v-if="b.Column" v-text="':' + b.Column"></span>
-      &rarr;
-      <span v-text="b.Method"></span>
+  <div class="tab-content">
+    <div class="tab-pane show active" id="page-summary">
+      <div class="table-responsive">
+        <table class="table table-bordered">
+          <tbody>
+            <tr>
+              <td class="fw-bold" width="200">MESSAGE</td>
+              <td>
+                <table class="small">
+                  <tbody>
+                    <tr v-for="item in problem.Messages">
+                      <td class="pe-3" v-text="item.Percent"></td>
+                      <td class="fw-bold" v-text="item.Value"></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </td>
+            </tr>
+            <tr>
+              <td class="fw-bold">ERROR CLASS</td>
+              <td v-text="notice.ErrorClass"></td>
+            </tr>
+            <tr>
+              <td class="fw-bold">URL</td>
+              <td v-text="notice.Url"></td>
+            </tr>
+            <tr>
+              <td class="fw-bold">WHERE</td>
+              <td v-text="notice.Location"></td>
+            </tr>
+            <tr>
+              <td class="fw-bold">OCCURRED</td>
+              <td v-text="formatTime(notice.CreatedAt)"></td>
+            </tr>
+            <tr>
+              <td class="fw-bold">SIMILAR</td>
+              <td v-text="problem.NoticesCount - 1"></td>
+            </tr>
+            <tr>
+              <td class="fw-bold">BROWSER</td>
+              <td>
+                <table class="small">
+                  <tbody>
+                    <tr v-for="item in problem.UserAgents">
+                      <td class="pe-3" v-text="item.Percent"></td>
+                      <td class="fw-bold" v-text="item.Value"></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </td>
+            </tr>
+            <tr>
+              <td class="fw-bold">ORIGIN</td>
+              <td>
+                <table class="small">
+                  <tbody>
+                    <tr v-for="item in problem.Hosts">
+                      <td class="pe-3" v-text="item.Percent"></td>
+                      <td class="fw-bold" v-text="item.Value"></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </td>
+            </tr>
+            <tr>
+              <td class="fw-bold">APP SERVER</td>
+              <td v-text="notice.AppServer"></td>
+            </tr>
+            <tr v-if="notice.AppVersion">
+              <td class="fw-bold">APP VERSION</td>
+              <td v-text="notice.AppVersion"></td>
+            </tr>
+            <tr v-if="notice.Framework">
+              <td class="fw-bold">FRAMEWORK</td>
+              <td v-text="notice.Framework"></td>
+            </tr>
+            <tr>
+              <td class="fw-bold">REL. DIRECTORY</td>
+              <td v-text="notice.ProjectRoot"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="tab-pane" id="page-backtrace">
+      <div class="p-3 bg-light border rounded-3 mb-4 small">
+        <div class="text-nowrap" v-for="b in notice.Backtraces">
+          <span v-text="b.File"></span>
+          <span v-if="b.Number" v-text="':' + b.Number"></span>
+          <span v-if="b.Column" v-text="':' + b.Column"></span>
+          &rarr;
+          <span v-text="b.Method"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-pane" id="page-user" v-if="hasUserAttributes">
+      <div class="table-responsive">
+        <table class="table table-bordered">
+          <tbody>
+            <tr v-for="(value, key) in notice.UserAttributes">
+              <th v-text="key"></th>
+              <td v-text="value"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="tab-pane" id="page-environment">
+      <div class="table-responsive">
+        <table class="table table-bordered">
+          <tbody>
+            <tr v-for="(value, key) in notice.EnvVars">
+              <th v-text="key"></th>
+              <td v-text="value"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="tab-pane" id="page-parameters">
+      <pre class="p-3 bg-light border rounded-3 mb-4" v-text="notice.Params"></pre>
+    </div>
+
+    <div class="tab-pane" id="page-session">
+      <pre class="p-3 bg-light border rounded-3 mb-4" v-text="notice.Session"></pre>
     </div>
   </div>
-
-  <template v-if="hasUserAttributes">
-  <h4 class="border-bottom pb-1 my-3">User</h4>
-  <div class="table-responsive">
-    <table class="table table-bordered">
-      <tbody>
-        <tr v-for="(value, key) in notice.UserAttributes">
-          <th v-text="key"></th>
-          <td v-text="value"></td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  </template>
-
-  <h4 class="border-bottom pb-1 my-3">Environment</h4>
-  <div class="table-responsive">
-    <table class="table table-bordered">
-      <tbody>
-        <tr v-for="(value, key) in notice.EnvVars">
-          <th v-text="key"></th>
-          <td v-text="value"></td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <h4 class="border-bottom pb-1 my-3">Parameters</h4>
-  <pre class="p-3 bg-light border rounded-3 mb-4" v-text="notice.Params"></pre>
-
-  <h4 class="border-bottom pb-1 my-3">Session</h4>
-  <pre class="p-3 bg-light border rounded-3 mb-4" v-text="notice.Session"></pre>
 </template>
 
 <script>
@@ -253,4 +286,7 @@ export default {
 </script>
 
 <style scoped>
+.nav-link {
+  transition: none;
+}
 </style>
