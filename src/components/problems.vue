@@ -1,6 +1,7 @@
 <template>
-  <template v-if="hasNoProblems && isSearch">
-    <h3>No errors matched your query</h3>
+  <template v-if="hasNoProblems">
+    <h3 v-if="isSearch">No errors matched your query</h3>
+    <template v-else><slot /></template>
   </template>
   <template v-else>
   <div class="table-responsive">

@@ -1,6 +1,8 @@
 <template>
   <ProblemsHeader />
-  <Problems v-bind:problems="problems" v-bind:apps="apps" v-bind:pagination="pagination" />
+  <Problems v-bind:problems="problems" v-bind:apps="apps" v-bind:pagination="pagination">
+    <h3 class="mb-0">No errors have been caught yet</h3>
+  </Problems>
 </template>
 
 <script>

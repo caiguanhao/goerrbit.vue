@@ -11,14 +11,11 @@
       <router-link v-bind:to="{ name: 'RouteAppsEdit', params: { id: app.Id } }" class="btn btn-primary">Edit</router-link>
     </div>
   </div>
-  <template v-if="hasNoProblems && !isSearch">
+  <ProblemsHeader />
+  <Problems v-bind:problems="problems" v-bind:pagination="pagination">
     <h3 class="mb-3">No errors have been caught yet, make sure you set up your app</h3>
     <pre class="p-3 bg-light border rounded-3 mb-4" v-text="rubyCode"></pre>
-  </template>
-  <template v-else>
-    <ProblemsHeader />
-    <Problems v-bind:problems="problems" v-bind:pagination="pagination" />
-  </template>
+  </Problems>
 </template>
 
 <script>
@@ -39,12 +36,6 @@ export default {
     }
   },
   computed: {
-    isSearch () {
-      return !!this.$route.query.query
-    },
-    hasNoProblems () {
-      return this.pagination.TotalCount === 0
-    },
     rubyCode () {
       let host = `${window.location.protocol}//${window.location.host}`
       return `# Require the airbrake gem in your App.
