@@ -7,6 +7,18 @@
       <router-link v-bind:to="{ name: 'RouteAppsNew' }" class="btn btn-primary">Add a New App</router-link>
     </div>
   </div>
+  <template v-if="pagination.TotalCount === 0 && !isSearch">
+    <h3 class="mb-0">No apps have been created yet</h3>
+  </template>
+  <template v-else>
+  <div class="d-sm-flex align-items-center justify-content-end">
+    <form class="mb-3" v-on:submit.prevent="search">
+      <div class="input-group">
+        <input type="text" class="form-control" v-model="query">
+        <button class="btn btn-outline-secondary" type="submit">Search</button>
+      </div>
+    </form>
+  </div>
   <div class="table-responsive">
     <table class="table">
       <thead>
@@ -33,16 +45,29 @@
       </tbody>
     </table>
   </div>
+  <Pagination v-if="pagination.TotalPages > 1" v-bind:pagination="pagination" />
+  </template>
 </template>
 
 <script>
 import http from '../http'
+import Pagination from '../components/pagination.vue'
 
 export default {
   data () {
     return {
       apps: [],
-      lastAppId: null
+      pagination: {},
+      lastAppId: null,
+      query: null
+    }
+  },
+  components: {
+    Pagination
+  },
+  computed: {
+    isSearch () {
+      return !!this.$route.query.query
     }
   },
   methods: {
@@ -50,12 +75,22 @@ export default {
       this.lastAppId = window.lastAppId
       window.lastAppId = null
       window.lastProblemId = null
+    },
+    search () {
+      this.$router.push({
+        name: this.$route.name,
+        query: {
+          query: this.query || undefined
+        }
+      })
     }
   },
   beforeRouteEnter (to, from, next) {
     http.get('/apps', { params: to.query }).then(res => {
       next(vm => {
         vm.apps = res.data.Apps
+        vm.pagination = res.data.Pagination
+        vm.query = to.query.query
         vm.load()
       })
     }, next)
@@ -63,6 +98,8 @@ export default {
   beforeRouteUpdate (to, from, next) {
     http.get('/apps', { params: to.query }).then(res => {
       this.apps = res.data.Apps
+      this.pagination = res.data.Pagination
+      this.query = to.query.query
       this.load()
       next()
     }, next)

@@ -22,6 +22,11 @@ export default {
       apps: []
     }
   },
+  methods: {
+    load () {
+      window.lastAppId = null
+    }
+  },
   beforeRouteEnter (to, from, next) {
     http.get('/problems', { params: to.query }).then(res => {
       next(vm => {
@@ -29,6 +34,7 @@ export default {
         vm.pagination = res.data.Pagination
         vm.apps = res.data.Apps
         vm.query = to.query.query
+        vm.load()
       })
     }, next)
   },
@@ -38,6 +44,7 @@ export default {
       this.pagination = res.data.Pagination
       this.apps = res.data.Apps
       this.query = to.query.query
+      this.load()
       next()
     }, next)
   }

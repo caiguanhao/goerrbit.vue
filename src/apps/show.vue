@@ -58,6 +58,11 @@ Airbrake.configure do |config|
 end`
     }
   },
+  methods: {
+    load () {
+      window.lastAppId = this.app.Id
+    }
+  },
   beforeRouteEnter (to, from, next) {
     Promise.all([
       http.get(`/apps/${to.params.id}`),
@@ -67,6 +72,7 @@ end`
         vm.app = res[0].data.App
         vm.problems = res[1].data.Problems
         vm.pagination = res[1].data.Pagination
+        vm.load()
       })
     }, next)
   },
@@ -78,6 +84,7 @@ end`
       this.app = res[0].data.App
       this.problems = res[1].data.Problems
       this.pagination = res[1].data.Pagination
+      this.load()
       next()
     }, next)
   }

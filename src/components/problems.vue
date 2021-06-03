@@ -53,7 +53,7 @@
       </tbody>
     </table>
   </div>
-  <Pagination v-bind:pagination="pagination" />
+  <Pagination v-if="pagination.TotalPages > 1" v-bind:pagination="pagination" />
   </template>
 </template>
 
@@ -113,7 +113,6 @@ export default {
   created () {
     this.lastProblemId = window.lastProblemId
     window.lastProblemId = null
-    window.lastAppId = null
   }
 }
 </script>
