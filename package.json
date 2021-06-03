@@ -3,7 +3,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "serve": "vite preview"
+    "serve": "vite preview",
+    "dist": "HASH=$(git rev-parse --short HEAD) && yarn build && git checkout dist && git add dist && git commit -m \"build for $HASH\""
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.35",
