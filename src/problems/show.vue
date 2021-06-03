@@ -1,6 +1,13 @@
 <template>
   <div class="p-3 bg-light border rounded-3 mb-4">
-    <h4 v-text="problem.ErrorClass"></h4>
+    <div class="d-sm-flex align-items-center justify-content-between">
+      <h4 class="mb-2" v-text="problem.ErrorClass"></h4>
+      <div v-if="problem.ResolvedAt" class="mb-2 ms-3 text-success"><faicon icon="check-circle" /> Resolved</div>
+      <button v-else class="btn btn-sm btn-primary mb-2" v-on:click.prevent="resolve">
+        <faicon icon="thumbs-up" />
+        Resolve
+      </button>
+    </div>
     <div class="small">
       <strong>App: </strong>
       <router-link v-bind:to="{ name: 'RouteAppsShow', params: { id: app.Id } }"
@@ -15,6 +22,10 @@
       <span v-text="formatTime(problem.FirstNoticeAt)"></span>
       <strong class="ms-2">Last Notice: </strong>
       <span v-text="formatTime(problem.LastNoticeAt)"></span>
+      <template v-if="problem.ResolvedAt">
+        <strong class="ms-2">Resolved At: </strong>
+        <span v-text="formatTime(problem.ResolvedAt)"></span>
+      </template>
     </div>
   </div>
 
@@ -235,6 +246,17 @@ export default {
     getNav () {
       http.get(`/apps/${this.app.Id}/problems/${this.problem.Id}/notices/${this.notice.Id}/nav`).then(res => {
         this.nav = res.data.Nav
+      })
+    },
+    resolve () {
+      if (!window.confirm('Resolve this issue? It can be unresolved later.')) return
+      http.put(`/apps/${this.problem.AppId}/problems/${this.problem.Id}/resolve`).then(res => {
+        this.$toast().success('Successfully resovled issue')
+        for (let key in res.data.Problem) {
+          this.problem[key] = res.data.Problem[key]
+        }
+      }, () => {
+        this.$toast().error('Error resolving issue')
       })
     }
   },

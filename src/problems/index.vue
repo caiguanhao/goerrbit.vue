@@ -1,35 +1,23 @@
 <template>
-  <div class="p-3 bg-light border rounded-3 mb-4 d-sm-flex align-items-center justify-content-between">
-    <h4 class="mb-3 mb-sm-0">Unresolved Errors</h4>
-    <form v-on:submit.prevent="search">
-      <div class="input-group">
-        <input type="text" class="form-control" v-model="query">
-        <button class="btn btn-outline-secondary" type="button">Search</button>
-      </div>
-    </form>
-  </div>
+  <ProblemsHeader />
   <Problems v-bind:problems="problems" v-bind:apps="apps" v-bind:pagination="pagination" />
 </template>
 
 <script>
 import http from '../http'
 import Problems from '../components/problems.vue'
+import ProblemsHeader from '../components/problems-header.vue'
 
 export default {
   components: {
-    Problems
+    Problems,
+    ProblemsHeader
   },
   data () {
     return {
       problems: [],
       pagination: {},
-      apps: [],
-      query: null
-    }
-  },
-  methods: {
-    search () {
-      this.$router.push({ name: this.$route.name, query: { query: this.query || undefined } })
+      apps: []
     }
   },
   beforeRouteEnter (to, from, next) {

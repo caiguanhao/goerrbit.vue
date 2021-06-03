@@ -1,4 +1,8 @@
 <template>
+  <template v-if="hasNoProblems && isSearch">
+    <h3>No errors matched your query</h3>
+  </template>
+  <template v-else>
   <div class="table-responsive">
     <table class="table">
       <thead>
@@ -9,12 +13,14 @@
           </th>
           <th>WHAT / WHERE</th>
           <th width="200">LATEST</th>
-          <th width="200">COUNT</th>
+          <th width="100">COUNT</th>
+          <th width="100">RESOLVE</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="problem in problems" class="clickable-row"
-          v-bind:class="{ highlighted: lastProblemId === problem.Id }">
+          v-bind:class="{ highlighted: lastProblemId === problem.Id,
+                          resolved: !!problem.ResolvedAt }">
           <td>
             <div v-if="apps">
               <router-link v-bind:to="{ name: 'RouteAppsShow', params: { id: problem.AppId } }"
@@ -37,16 +43,23 @@
               v-bind:class="problem.NoticesCount === 0 ? 'bg-success' : 'bg-danger'"
               v-text="problem.NoticesCount"></span>
           </td>
+          <td>
+            <a href class="text-primary"
+              v-if="!problem.ResolvedAt"
+              v-on:click.prevent="resolve(problem)"><faicon icon="thumbs-up" /></a>
+          </td>
         </tr>
       </tbody>
     </table>
   </div>
   <Pagination v-bind:pagination="pagination" />
+  </template>
 </template>
 
 <script>
 import * as timeago from 'timeago.js'
 import Pagination from '../components/pagination.vue'
+import http from '../http'
 
 export default {
   props: {
@@ -72,19 +85,40 @@ export default {
         map[this.apps[i].Id] = this.apps[i].Name
       }
       return map
+    },
+    isSearch () {
+      return !!this.$route.query.query
+    },
+    hasNoProblems () {
+      return this.pagination.TotalCount === 0
     }
   },
   methods: {
     timeago (time) {
       return timeago.format(time)
     },
-    appName (appId) {
+    resolve (problem) {
+      if (!window.confirm('Resolve this issue? It can be unresolved later.')) return
+      http.put(`/apps/${problem.AppId}/problems/${problem.Id}/resolve`).then(res => {
+        this.$toast().success('Successfully resovled issue')
+        for (let key in res.data.Problem) {
+          problem[key] = res.data.Problem[key]
+        }
+      }, () => {
+        this.$toast().error('Error resolving issue')
+      })
     }
   },
   created () {
     this.lastProblemId = window.lastProblemId
     window.lastProblemId = null
     window.lastAppId = null
-  },
+  }
 }
 </script>
+
+<style scoped>
+.resolved {
+  opacity: 0.5;
+}
+</style>

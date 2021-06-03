@@ -8,9 +8,19 @@ import router from './routes'
 import i18n from './i18n'
 import utils from './utils'
 
+import { library } from '@fortawesome/fontawesome-svg-core'
+import {
+  faThumbsUp, faCheckCircle
+} from '@fortawesome/free-solid-svg-icons'
+library.add(
+  faThumbsUp, faCheckCircle
+)
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+
 const app = createApp(App)
 app.use(router)
 app.use(Toast).mixin({ methods: { $toast: useToast } })
 app.mixin(i18n)
 app.mixin(utils)
+app.component('faicon', FontAwesomeIcon)
 app.mount('body')

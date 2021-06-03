@@ -16,38 +16,26 @@
     <pre class="p-3 bg-light border rounded-3 mb-4" v-text="rubyCode"></pre>
   </template>
   <template v-else>
-  <div class="d-sm-flex align-items-center justify-content-between">
-    <h4 class="mb-3">Errors</h4>
-    <form class="mb-3" v-on:submit.prevent="search">
-      <div class="input-group">
-        <input type="text" class="form-control" v-model="query">
-        <button class="btn btn-outline-secondary" type="button">Search</button>
-      </div>
-    </form>
-  </div>
-  <template v-if="hasNoProblems && isSearch">
-    <h3>No errors matched your query</h3>
-  </template>
-  <template v-else>
+    <ProblemsHeader />
     <Problems v-bind:problems="problems" v-bind:pagination="pagination" />
-  </template>
   </template>
 </template>
 
 <script>
 import http from '../http'
 import Problems from '../components/problems.vue'
+import ProblemsHeader from '../components/problems-header.vue'
 
 export default {
   components: {
-    Problems
+    Problems,
+    ProblemsHeader
   },
   data () {
     return {
       app: {},
       problems: [],
-      pagination: {},
-      query: null
+      pagination: {}
     }
   },
   computed: {
@@ -79,11 +67,6 @@ Airbrake.configure do |config|
 end`
     }
   },
-  methods: {
-    search () {
-      this.$router.push({ name: this.$route.name, query: { query: this.query || undefined } })
-    }
-  },
   beforeRouteEnter (to, from, next) {
     Promise.all([
       http.get(`/apps/${to.params.id}`),
@@ -93,7 +76,6 @@ end`
         vm.app = res[0].data.App
         vm.problems = res[1].data.Problems
         vm.pagination = res[1].data.Pagination
-        vm.query = to.query.query
       })
     }, next)
   },
@@ -105,7 +87,6 @@ end`
       this.app = res[0].data.App
       this.problems = res[1].data.Problems
       this.pagination = res[1].data.Pagination
-      this.query = to.query.query
       next()
     }, next)
   }
