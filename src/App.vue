@@ -4,23 +4,33 @@
       <div class="container-fluid">
         <router-link class="navbar-brand"
           v-bind:to="{ name: 'RouteHome' }">Errbit</router-link>
-        <button class="navbar-toggler" type="button"
-          data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
-          aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarCollapse">
-          <ul class="navbar-nav me-auto mb-2 mb-md-0">
-            <li class="nav-item">
-              <router-link class="nav-link" active-class="active"
-                v-bind:to="{ name: 'RouteHome' }">Apps</router-link>
-            </li>
-            <li class="nav-item">
-              <router-link class="nav-link" active-class="active"
-                v-bind:to="{ name: 'RouteProblems' }">Errors</router-link>
-            </li>
-          </ul>
-        </div>
+        <template v-if="currentUser">
+          <button class="navbar-toggler" type="button"
+            data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
+            aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav me-auto mb-2 mb-md-0">
+              <li class="nav-item">
+                <router-link class="nav-link" active-class="active"
+                  v-bind:to="{ name: 'RouteHome' }">Apps</router-link>
+              </li>
+              <li class="nav-item">
+                <router-link class="nav-link" active-class="active"
+                  v-bind:to="{ name: 'RouteProblems' }">Errors</router-link>
+              </li>
+            </ul>
+            <ul class="navbar-nav mb-2 mb-md-0">
+              <li class="navbar-text me-3">
+                <span v-text="currentUser.Name"></span>
+              </li>
+              <li class="nav-item">
+                <a href class="nav-link" v-on:click.prevent="signOut">Sign Out</a>
+              </li>
+            </ul>
+          </div>
+        </template>
       </div>
     </nav>
   </header>
@@ -40,6 +50,13 @@
 
 <script>
 export default {
+  methods: {
+    signOut () {
+      if (window.sessionStorage) window.sessionStorage.removeItem('token')
+      if (window.localStorage) window.localStorage.removeItem('token')
+      this.$router.push({ name: 'RouteSignIn' })
+    }
+  },
   created () {
     document.addEventListener('click', (e) => {
       if (window.getSelection().toString().length) return

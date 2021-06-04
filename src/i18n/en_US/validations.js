@@ -12,4 +12,5 @@ export default {
   string_ne: p => `length must not be ${p}`,
   string_uniqueness: p => `already exists`,
   string_required: p => `must not be blank`,
+  string_wrong: p => `wrong name or password`,
 }

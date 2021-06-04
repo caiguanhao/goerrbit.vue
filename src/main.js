@@ -6,6 +6,7 @@ import 'vue-toastification/dist/index.css'
 import App from './App.vue'
 import router from './routes'
 import i18n from './i18n'
+import user from './user'
 import utils from './utils'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
@@ -21,6 +22,8 @@ const app = createApp(App)
 app.use(router)
 app.use(Toast).mixin({ methods: { $toast: useToast } })
 app.mixin(i18n)
+app.mixin(user)
 app.mixin(utils)
 app.component('faicon', FontAwesomeIcon)
-app.mount('body')
+const vm = app.mount('body')
+router.setVM(vm)
