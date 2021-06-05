@@ -6,6 +6,9 @@ import RouteAppsNew from './apps/new.vue'
 import RouteAppsEdit from './apps/edit.vue'
 import RouteProblems from './problems/index.vue'
 import RouteProblemsShow from './problems/show.vue'
+import RouteUsers from './users/index.vue'
+import RouteUsersNew from './users/new.vue'
+import RouteUsersEdit from './users/edit.vue'
 import RouteSignIn from './sessions/sign-in.vue'
 import RouteError from './errors/index.vue'
 
@@ -34,6 +37,9 @@ const router = createRouter({
       component: RouteProblemsShow
     },
     { path: '/errors', name: 'RouteProblems', component: RouteProblems },
+    { path: '/users', name: 'RouteUsers', component: RouteUsers },
+    { path: '/users/new', name: 'RouteUsersNew', component: RouteUsersNew },
+    { path: '/users/:id/edit', name: 'RouteUsersEdit', component: RouteUsersEdit },
     { path: '/sign-in', name: 'RouteSignIn', component: RouteSignIn, meta: { needCurrentUser: false } },
     { path: '/error', name: 'RouteError', component: RouteError },
     { path: '/:pathMatch(.*)*', component: RouteError }

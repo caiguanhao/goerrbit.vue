@@ -4,7 +4,8 @@
       <h4>Apps</h4>
     </div>
     <div>
-      <router-link v-bind:to="{ name: 'RouteAppsNew' }" class="btn btn-primary">Add a New App</router-link>
+      <router-link v-bind:to="{ name: 'RouteAppsNew' }"
+        v-if="currentUser.IsAdmin" class="btn btn-primary">Add a New App</router-link>
     </div>
   </div>
   <template v-if="pagination.TotalCount === 0 && !isSearch">

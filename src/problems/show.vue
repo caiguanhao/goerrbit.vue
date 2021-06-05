@@ -255,8 +255,10 @@ export default {
         for (let key in res.data.Problem) {
           this.problem[key] = res.data.Problem[key]
         }
-      }, () => {
-        this.$toast().error('Error resolving issue')
+      }, (error) => {
+        if (!error || !error.toastShown) {
+          this.$toast().error('Error resolving issue')
+        }
       })
     }
   },

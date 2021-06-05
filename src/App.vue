@@ -20,10 +20,18 @@
                 <router-link class="nav-link" active-class="active"
                   v-bind:to="{ name: 'RouteProblems' }">Errors</router-link>
               </li>
+              <li class="nav-item">
+                <router-link class="nav-link" active-class="active"
+                  v-bind:to="{ name: 'RouteUsers' }">Users</router-link>
+              </li>
             </ul>
             <ul class="navbar-nav mb-2 mb-md-0">
-              <li class="navbar-text me-3">
-                <span v-text="currentUser.Name"></span>
+              <li class="nav-item">
+                <router-link v-bind:to="{ name: 'RouteUsersEdit', params: { id: currentUser.Id } }"
+                  class="nav-link">
+                  <faicon class="me-2" icon="crown" title="User is an admin" v-if="currentUser.IsAdmin" />
+                  <span v-text="currentUser.Name"></span>
+                </router-link>
               </li>
               <li class="nav-item">
                 <a href class="nav-link" v-on:click.prevent="signOut">Sign Out</a>

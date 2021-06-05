@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { useToast } from 'vue-toastification'
 
 const http = axios.create({
   baseURL: '/api/admin',
@@ -21,7 +22,18 @@ http.interceptors.request.use(config => {
   }
   return config
 }, error => {
-  Promise.reject(error)
+  return Promise.reject(error)
 })
+
+http.interceptors.response.use(res => {
+  return res
+}, error => {
+  if (error && error.response && error.response.status === 403) {
+    useToast().error('No permission')
+    error.toastShown = true
+  }
+  return Promise.reject(error)
+})
+
 
 export default http

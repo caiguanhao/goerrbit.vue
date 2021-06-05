@@ -3,16 +3,18 @@
     <div class="mb-3 row">
       <label class="col-sm-2 col-form-label">Name</label>
       <div class="col-sm-8">
-        <input type="text" class="form-control" v-model="obj.Name" ref="Name">
+        <input type="text" class="form-control" v-model="obj.Name" ref="Name"
+          v-bind:disabled="!currentUser.IsAdmin">
       </div>
     </div>
     <div class="mb-3 row">
       <label class="col-sm-2 col-form-label">API Key</label>
       <div class="col-sm-8">
-        <input type="text" class="form-control" v-model="obj.ApiKey" ref="ApiKey">
+        <input type="text" class="form-control" v-model="obj.ApiKey" ref="ApiKey"
+          v-bind:disabled="!currentUser.IsAdmin">
       </div>
       <div class="col-sm-2">
-        <div class="form-control-plaintext">
+        <div class="form-control-plaintext" v-if="currentUser.IsAdmin">
           <a href v-on:click.prevent="generateApiKey">Regenerate</a>
         </div>
       </div>
@@ -23,14 +25,15 @@
         <div class="form-control-plaintext">
           <div class="form-check">
             <label class="form-check-label">
-              <input class="form-check-input" type="checkbox" v-model="customFingerprinter">
+              <input class="form-check-input" type="checkbox" v-model="customFingerprinter"
+                v-bind:disabled="!currentUser.IsAdmin">
               <span>Custom Fingerprinter</span>
             </label>
           </div>
           <div class="form-check">
             <label class="form-check-label">
               <input class="form-check-input" type="checkbox"
-                v-bind:disabled="!customFingerprinter"
+                v-bind:disabled="!currentUser.IsAdmin || !customFingerprinter"
                 v-model="currentFingerprinter.ErrorClass">
               <span>Error Class</span>
             </label>
@@ -38,7 +41,7 @@
           <div class="form-check">
             <label class="form-check-label">
               <input class="form-check-input" type="checkbox"
-                v-bind:disabled="!customFingerprinter"
+                v-bind:disabled="!currentUser.IsAdmin || !customFingerprinter"
                 v-model="currentFingerprinter.Message">
               <span>Message</span>
             </label>
@@ -46,7 +49,7 @@
           <div class="form-check">
             <label class="form-check-label">
               <input class="form-check-input" type="checkbox"
-                v-bind:disabled="!customFingerprinter"
+                v-bind:disabled="!currentUser.IsAdmin || !customFingerprinter"
                 v-model="currentFingerprinter.Component">
               <span>Component</span>
             </label>
@@ -54,7 +57,7 @@
           <div class="form-check">
             <label class="form-check-label">
               <input class="form-check-input" type="checkbox"
-                v-bind:disabled="!customFingerprinter"
+                v-bind:disabled="!currentUser.IsAdmin || !customFingerprinter"
                 v-model="currentFingerprinter.Action">
               <span>Action</span>
             </label>
@@ -62,7 +65,7 @@
           <div class="form-check">
             <label class="form-check-label">
               <input class="form-check-input" type="checkbox"
-                v-bind:disabled="!customFingerprinter"
+                v-bind:disabled="!currentUser.IsAdmin || !customFingerprinter"
                 v-model="currentFingerprinter.EnvironmentName">
               <span>Environment Name</span>
             </label>
@@ -71,7 +74,7 @@
             <div class="input-group input-group-sm backtrace">
               <span class="input-group-text">Backtrace Lines</span>
               <input class="form-control" type="number" min="-1" step="1"
-                v-bind:disabled="!customFingerprinter"
+                v-bind:disabled="!currentUser.IsAdmin || !customFingerprinter"
                 v-model.number="currentFingerprinter.BacktraceLines">
             </div>
           </div>
@@ -81,7 +84,7 @@
     <div class="mb-3 row">
       <div class="col-sm-10 offset-sm-2">
         <button type="submit" class="btn btn-primary"
-          v-bind:disabled="loading">Submit</button>
+          v-bind:disabled="!currentUser.IsAdmin || loading">Submit</button>
       </div>
     </div>
   </form>
@@ -147,7 +150,9 @@ export default {
         }, (e) => {
           this.loading = false
           if (!this.processErrors(e)) {
-            this.$toast().error('Error updating app')
+            if (!e || !e.toastShown) {
+              this.$toast().error('Error updating app')
+            }
           }
         })
         return
@@ -164,7 +169,9 @@ export default {
       }, (e) => {
         this.loading = false
         if (!this.processErrors(e)) {
-          this.$toast().error('Error creating app')
+          if (!e || !e.toastShown) {
+            this.$toast().error('Error creating app')
+          }
         }
       })
     }

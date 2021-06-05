@@ -54,7 +54,9 @@ export default {
       }, (e) => {
         this.loading = false
         if (!this.processErrors(e)) {
-          this.$toast().error('Error signing in')
+          if (!e || !e.toastShown) {
+            this.$toast().error('Error signing in')
+          }
         }
       })
     }
