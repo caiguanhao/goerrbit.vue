@@ -50,7 +50,9 @@ export default {
           if (window.localStorage) window.localStorage.removeItem('token')
           if (window.sessionStorage) window.sessionStorage.setItem('token', res.data.Token)
         }
-        this.$router.push({ name: 'RouteHome' })
+        this.$router.push({ name: 'RouteHome' }).then(() => {
+          this.$toast().success('Successfully signed in')
+        })
       }, (e) => {
         this.loading = false
         if (!this.processErrors(e)) {

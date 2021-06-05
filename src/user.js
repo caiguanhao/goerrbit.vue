@@ -6,7 +6,6 @@ const currentUser = reactive({})
 export default {
   computed: {
     currentUser () {
-      if (!currentUser.Id) return null
       return currentUser
     }
   },

@@ -59,7 +59,7 @@ router.beforeEach((to, from, next) => {
   router.$lastRoute = to
   if (router.$vm) {
     router.$vm.getCurrentUser().then(() => {
-      if (to.meta.needCurrentUser === false && router.$vm.currentUser) {
+      if (to.meta.needCurrentUser === false && router.$vm.currentUser.Id) {
         next({ name: 'RouteHome' })
       } else {
         next()

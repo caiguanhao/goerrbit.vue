@@ -4,7 +4,7 @@
       <div class="container-fluid">
         <router-link class="navbar-brand"
           v-bind:to="{ name: 'RouteHome' }">Errbit</router-link>
-        <template v-if="currentUser">
+        <template v-if="currentUser.Id">
           <button class="navbar-toggler" type="button"
             data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
             aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
@@ -57,12 +57,20 @@
 </template>
 
 <script>
+import http from './http'
+
 export default {
   methods: {
     signOut () {
-      if (window.sessionStorage) window.sessionStorage.removeItem('token')
-      if (window.localStorage) window.localStorage.removeItem('token')
-      this.$router.push({ name: 'RouteSignIn' })
+      http.post('/sign-out').then(res => {
+        if (window.sessionStorage) window.sessionStorage.removeItem('token')
+        if (window.localStorage) window.localStorage.removeItem('token')
+        this.$router.push({ name: 'RouteSignIn' }).then(() => {
+          this.$toast().success('Successfully signed out')
+        })
+      }, () => {
+        this.$toast().error('Error signing out')
+      })
     }
   },
   created () {
