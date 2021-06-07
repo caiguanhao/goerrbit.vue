@@ -97,6 +97,11 @@ main > .container {
   padding-top: 80px;
 }
 
+::-webkit-input-placeholder,
+::placeholder {
+  color: #d8dde2 !important;
+}
+
 .clickable-row {
   cursor: pointer;
 }

@@ -165,7 +165,7 @@ export default {
             id: res.data.App.Id
           }
         })
-        this.$toast().success('Successfully creating app')
+        this.$toast().success('Successfully created app')
       }, (e) => {
         this.loading = false
         if (!this.processErrors(e)) {

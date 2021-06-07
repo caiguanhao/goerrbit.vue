@@ -1,16 +1,16 @@
 <template>
-  <div class="mb-3 border-bottom">
-    <h1 class="h3">Edit App</h1>
-  </div>
+  <Nav />
   <Form class="col-sm-8" v-bind:obj="app" />
 </template>
 
 <script>
 import http from '../http'
+import Nav from './nav.vue'
 import Form from './form.vue'
 
 export default {
   components: {
+    Nav,
     Form
   },
   data () {

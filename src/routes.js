@@ -4,6 +4,7 @@ import RouteApps from './apps/index.vue'
 import RouteAppsShow from './apps/show.vue'
 import RouteAppsNew from './apps/new.vue'
 import RouteAppsEdit from './apps/edit.vue'
+import RouteAppsNotifications from './apps/notifications.vue'
 import RouteProblems from './problems/index.vue'
 import RouteProblemsShow from './problems/show.vue'
 import RouteUsers from './users/index.vue'
@@ -26,6 +27,7 @@ const router = createRouter({
     { path: '/apps/new', name: 'RouteAppsNew', component: RouteAppsNew },
     { path: '/apps/:id', name: 'RouteAppsShow', component: RouteAppsShow },
     { path: '/apps/:id/edit', name: 'RouteAppsEdit', component: RouteAppsEdit },
+    { path: '/apps/:id/notifications', name: 'RouteAppsNotifications', component: RouteAppsNotifications },
     {
       path: '/apps/:id/problems/:pid/notices/:nid',
       name: 'RouteNoticesShow',
