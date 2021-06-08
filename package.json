@@ -5,7 +5,7 @@
     "build": "vite build",
     "serve": "vite preview",
     "dist": "HASH=$(git rev-parse --short HEAD) && yarn build && yarn mvdist && git add dist && git commit -m \"build for $HASH\"",
-    "mvdist": "rm -rf .git/dist && mv dist .git && git checkout dist && cp -r .git/dist . && rm -rf .git/dist"
+    "mvdist": "rm -rf .git/dist && mv dist .git && git checkout dist && rm -rf dist && mv .git/dist dist"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.35",
