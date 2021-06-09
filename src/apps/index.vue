@@ -24,18 +24,21 @@
     <table class="table">
       <thead>
         <tr>
-          <th width="100">#</th>
           <th>Name</th>
-          <th width="200">Errors</th>
+          <th width="20%">Notify</th>
+          <th width="20%">Errors</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="app in apps" class="clickable-row"
           v-bind:class="{ highlighted: lastAppId === app.Id }">
-          <td v-text="app.Id"></td>
           <td>
             <router-link v-bind:to="{ name: 'RouteAppsShow', params: { id: app.Id } }"
               v-text="app.Name"></router-link>
+          </td>
+          <td>
+            <router-link v-bind:to="{ name: 'RouteAppsNotifications', params: { id: app.Id } }"
+              v-text="count(app.NotificationServicesCount)"></router-link>
           </td>
           <td>
             <span class="badge rounded-pill"
@@ -84,6 +87,15 @@ export default {
           query: this.query || undefined
         }
       })
+    },
+    count (c) {
+      if (c.Enabled > 0 && c.Disabled > 0) {
+        return `${c.Enabled} enabled, ${c.Disabled} disabled`
+      }
+      if (c.Enabled === 0 && c.Disabled > 0) {
+        return `${c.Disabled} disabled`
+      }
+      return `${c.Enabled} enabled`
     }
   },
   beforeRouteEnter (to, from, next) {
