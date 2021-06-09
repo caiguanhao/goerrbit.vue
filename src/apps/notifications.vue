@@ -126,6 +126,13 @@ export default {
     }
   },
   methods: {
+    closeModals () {
+      let m = Modal.getInstance(document.getElementById('add'))
+      if (m) m.hide()
+      m = Modal.getInstance(document.getElementById('edit'))
+      if (m) m.hide()
+    },
+
     getService (name, field) {
       for (let i = 0; i < this.availableServices.length; i++) {
         if (this.availableServices[i].Name === name) return this.availableServices[i][field]
@@ -179,7 +186,7 @@ export default {
         this.selectedService = null
         this.$toast().success('Successfully added service')
         this.services = res.data.NotificatinonServices
-        Modal.getInstance(document.getElementById('add')).hide()
+        this.closeModals()
       }, (e) => {
         this.loading = false
         if (!this.processErrors(e)) {
@@ -200,7 +207,7 @@ export default {
         this.loading = false
         this.$toast().success('Successfully updated service')
         this.services = res.data.NotificatinonServices
-        Modal.getInstance(document.getElementById('edit')).hide()
+        this.closeModals()
       }, (e) => {
         this.loading = false
         if (!this.processErrors(e)) {
@@ -223,7 +230,7 @@ export default {
         this.loading = false
         this.$toast().success('Successfully removed service')
         this.services = res.data.NotificatinonServices
-        Modal.getInstance(document.getElementById('edit')).hide()
+        this.closeModals()
       }, (e) => {
         this.loading = false
         this.$toast().error('Error removing service')
@@ -250,6 +257,10 @@ export default {
       this.services = res[1].data.NotificatinonServices
       next()
     }, next)
+  },
+  beforeRouteLeave (to, from, next) {
+    this.closeModals()
+    next()
   }
 }
 </script>
