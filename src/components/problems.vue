@@ -8,14 +8,21 @@
     <table class="table">
       <thead>
         <tr>
-          <th width="200">
+          <th width="18%">
             <div v-if="apps">APP</div>
             <div v-else>ENV</div>
           </th>
-          <th>WHAT / WHERE</th>
-          <th width="200">LATEST</th>
-          <th width="100">COUNT</th>
-          <th width="100">RESOLVE</th>
+          <th>
+            <SortButton sort="message" defaultOrder="asc"
+              v-bind:pagination="pagination">WHAT / WHERE</SortButton>
+          </th>
+          <th width="15%">
+            <SortButton sort="last_notice_at" v-bind:pagination="pagination">LATEST</SortButton>
+          </th>
+          <th width="10%">
+            <SortButton sort="notices_count" v-bind:pagination="pagination">COUNT</SortButton>
+          </th>
+          <th width="10%">RESOLVE</th>
         </tr>
       </thead>
       <tbody>
@@ -67,7 +74,8 @@
 
 <script>
 import * as timeago from 'timeago.js'
-import Pagination from '../components/pagination.vue'
+import SortButton from './sort-button.vue'
+import Pagination from './pagination.vue'
 import http from '../http'
 
 export default {
@@ -77,7 +85,8 @@ export default {
     pagination: Object
   },
   components: {
-    Pagination
+    Pagination,
+    SortButton
   },
   data () {
     return {

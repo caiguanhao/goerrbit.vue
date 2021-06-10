@@ -34,7 +34,12 @@
       <thead>
         <tr>
           <th width="60">#</th>
-          <th>Name</th>
+          <th>
+            <SortButton sort="name" defaultOrder="asc" v-bind:pagination="pagination">NAME</SortButton>
+          </th>
+          <th width="25%">
+            <SortButton sort="created_at" v-bind:pagination="pagination">CREATED AT</SortButton>
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -48,6 +53,7 @@
             <router-link v-bind:to="{ name: 'RouteUsersEdit', params: { id: user.Id } }"
               v-text="user.Name"></router-link>
           </td>
+          <td v-text="formatTime(user.CreatedAt)"></td>
         </tr>
       </tbody>
     </table>
@@ -59,6 +65,7 @@
 <script>
 import http from '../http'
 import Pagination from '../components/pagination.vue'
+import SortButton from '../components/sort-button.vue'
 
 export default {
   data () {
@@ -69,7 +76,8 @@ export default {
     }
   },
   components: {
-    Pagination
+    Pagination,
+    SortButton
   },
   computed: {
     isSearch () {

@@ -24,9 +24,11 @@
     <table class="table">
       <thead>
         <tr>
-          <th>Name</th>
-          <th width="20%">Notify</th>
-          <th width="20%">Errors</th>
+          <th>
+            <SortButton sort="name" v-bind:pagination="pagination">NAME</SortButton>
+          </th>
+          <th width="20%">NOTIFY</th>
+          <th width="20%">ERRORS</th>
         </tr>
       </thead>
       <tbody>
@@ -56,6 +58,7 @@
 <script>
 import http from '../http'
 import Pagination from '../components/pagination.vue'
+import SortButton from '../components/sort-button.vue'
 
 export default {
   data () {
@@ -67,7 +70,8 @@ export default {
     }
   },
   components: {
-    Pagination
+    Pagination,
+    SortButton
   },
   computed: {
     isSearch () {
