@@ -13,7 +13,7 @@
   </div>
   <ProblemsHeader />
   <Problems v-bind:problems="problems" v-bind:pagination="pagination">
-    <h3 class="mb-3">No errors have been caught yet, make sure you set up your app</h3>
+    <h5 class="mb-3 text-muted">No errors have been caught yet, make sure you set up your app</h5>
     <pre class="p-3 bg-light border rounded-3 mb-4" v-text="rubyCode"></pre>
   </Problems>
 </template>

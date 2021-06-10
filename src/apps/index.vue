@@ -9,7 +9,7 @@
     </div>
   </div>
   <template v-if="pagination.TotalCount === 0 && !isSearch">
-    <h3 class="mb-0">No apps have been created yet</h3>
+    <h5 class="mb-0 text-muted">No apps have been created yet</h5>
   </template>
   <template v-else>
   <div class="d-sm-flex align-items-center justify-content-end">
@@ -89,6 +89,9 @@ export default {
       })
     },
     count (c) {
+      if (!c) {
+        return '0 enabled'
+      }
       if (c.Enabled > 0 && c.Disabled > 0) {
         return `${c.Enabled} enabled, ${c.Disabled} disabled`
       }

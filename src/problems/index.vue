@@ -1,7 +1,7 @@
 <template>
   <ProblemsHeader />
   <Problems v-bind:problems="problems" v-bind:apps="apps" v-bind:pagination="pagination">
-    <h3 class="mb-0">No errors have been caught yet</h3>
+    <h5 class="mb-0 text-muted">No errors have been caught yet</h5>
   </Problems>
 </template>
 

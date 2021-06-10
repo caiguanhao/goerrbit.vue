@@ -1,6 +1,6 @@
 <template>
   <template v-if="hasNoProblems">
-    <h3 v-if="isSearch">No errors matched your query</h3>
+    <h5 class="mb-0 text-muted" v-if="isSearch">No errors matched your query</h5>
     <template v-else><slot /></template>
   </template>
   <template v-else>

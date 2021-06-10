@@ -1,8 +1,4 @@
 <template>
-  <template v-if="pagination.TotalCount === 0 && !isSearch">
-    <h3 class="mb-0">No users have been created yet</h3>
-  </template>
-  <template v-else>
   <div class="d-sm-flex align-items-center justify-content-between">
     <div class="mb-3">
       <button class="btn btn-outline-secondary dropdown-toggle"
@@ -29,8 +25,8 @@
       </div>
     </form>
   </div>
-  <template v-if="pagination.TotalCount === 0 && isSearch">
-    <h3 class="mb-0">No users matched your query</h3>
+  <template v-if="pagination.TotalCount === 0">
+    <h5 class="mb-0 text-muted">No users matched your query</h5>
   </template>
   <template v-else>
   <div class="table-responsive">
@@ -57,7 +53,6 @@
     </table>
   </div>
   <Pagination v-if="pagination.TotalPages > 1" v-bind:pagination="pagination" />
-  </template>
   </template>
 </template>
 
