@@ -27,9 +27,17 @@
               <router-link v-bind:to="{ name: 'RouteAppsShow', params: { id: problem.AppId } }"
                 v-text="appNames[problem.AppId]">
               </router-link>
-              <small class="ms-2"><small v-text="problem.Environment"></small></small>
+              <small class="ms-2">
+                <router-link v-bind:to="{ query: { environment: problem.Environment } }"
+                  class="small" v-text="problem.Environment">
+                </router-link>
+              </small>
             </div>
-            <div v-else v-text="problem.Environment"></div>
+            <div v-else>
+              <router-link v-bind:to="{ query: { environment: problem.Environment } }"
+                v-text="problem.Environment">
+              </router-link>
+            </div>
           </td>
           <td>
             <router-link v-bind:to="{ name: 'RouteProblemsShow', params: { id: problem.AppId, pid: problem.Id } }"

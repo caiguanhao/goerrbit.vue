@@ -32,8 +32,13 @@ export default {
       query: null
     }
   },
-  created () {
-    this.query = this.$route.query.query
+  watch: {
+    '$route.query.query': {
+      immediate: true,
+      handler (value) {
+        this.query = value
+      }
+    }
   },
   methods: {
     search () {
@@ -41,6 +46,7 @@ export default {
         name: this.$route.name,
         query: {
           status: this.$route.query.status,
+          environment: this.$route.query.environment,
           query: this.query || undefined
         }
       })
