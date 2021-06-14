@@ -16,7 +16,7 @@ export default {
       let refs = {}
       for (let key in this.$refs) {
         refs[key] = this.$refs[key]
-        if (refs[key].$refs) {
+        if (refs[key] && refs[key].$refs) {
           for (let k in refs[key].$refs) {
             refs[k] = refs[key].$refs[k]
           }

@@ -61,7 +61,15 @@
               <small v-text="selectedService.Description"></small>
             </div>
           </div>
-          <div v-if="selectedService">
+          <div class="mb-2" v-if="selectedService && relatedApps.length">
+            <select class="form-select" v-model="selectedRelatedAppId">
+              <option v-bind:value="null">Enter new</option>
+              <option v-for="app in relatedApps"
+                v-bind:value="app.Id"
+                v-text="`Copy ${selectedService.Name} settings from app ${app.Name} (#${app.Id})`"></option>
+            </select>
+          </div>
+          <div v-if="selectedService && selectedRelatedAppId === null">
             <div class="mb-2" v-for="field in selectedService.Fields">
               <NotificationField v-bind:field="field" v-bind:ref="field.Name"
                 v-bind:options="selectedServiceOptions" />
@@ -121,7 +129,9 @@ export default {
       selectedServiceOptions: {},
       services: [],
       availableServices: [],
-      editingService: null
+      editingService: null,
+      relatedApps: [],
+      selectedRelatedAppId: null
     }
   },
   watch: {
@@ -129,9 +139,15 @@ export default {
       for (let key in this.selectedServiceOptions) {
         delete(this.selectedServiceOptions[key])
       }
-      service.Fields.forEach(f => {
-        this.selectedServiceOptions[f.Name] = f.DefaultValue
-      })
+      if (service) {
+        service.Fields.forEach(f => {
+          this.selectedServiceOptions[f.Name] = f.DefaultValue
+        })
+        this.getRelated(service.Name)
+      } else {
+        this.relatedApps = []
+        this.selectedRelatedAppId = null
+      }
     }
   },
   methods: {
@@ -200,10 +216,21 @@ export default {
     add () {
       this.loading = true
       this.processErrors()
-      http.post(`/apps/${this.$route.params.id}/notification-services`, {
-        Name: this.selectedService.Name,
-        Options: this.selectedServiceOptions
-      }).then((res) => {
+
+      let promise
+      if (this.selectedRelatedAppId) {
+        promise = http.post(`/apps/${this.$route.params.id}/notification-services/related`, {
+          From: this.selectedRelatedAppId,
+          Name: this.selectedService.Name
+        })
+      } else {
+        promise = http.post(`/apps/${this.$route.params.id}/notification-services`, {
+          Name: this.selectedService.Name,
+          Options: this.selectedServiceOptions
+        })
+      }
+
+      promise.then((res) => {
         this.loading = false
         this.selectedService = null
         this.$toast().success('Successfully added service')
@@ -262,6 +289,18 @@ export default {
       }, (e) => {
         this.loading = false
         this.$toast().error('Error removing service')
+      })
+    },
+
+    getRelated (name) {
+      http.get('/notification-services/related', {
+        params: {
+          AppId: this.$route.params.id,
+          Name: name
+        }
+      }).then(res => {
+        this.relatedApps = res.data.Apps
+        this.selectedRelatedAppId = null
       })
     }
   },
