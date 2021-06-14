@@ -40,6 +40,8 @@
   </div>
 
   <form v-on:submit.prevent="add" class="modal" id="add" tabindex="-1">
+    <input type="text" class="fake-input">
+    <input type="password" class="fake-input">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
@@ -61,7 +63,8 @@
           </div>
           <div v-if="selectedService">
             <div class="mb-2" v-for="field in selectedService.Fields">
-              <NotificationField v-bind:field="field" v-bind:options="selectedServiceOptions" />
+              <NotificationField v-bind:field="field" v-bind:ref="field.Name"
+                v-bind:options="selectedServiceOptions" />
             </div>
           </div>
         </div>
@@ -74,6 +77,8 @@
   </form>
 
   <form v-on:submit.prevent="submit" class="modal" id="edit" tabindex="-1">
+    <input type="text" class="fake-input">
+    <input type="password" class="fake-input">
     <div class="modal-dialog">
       <div class="modal-content" v-if="editingService">
         <div class="modal-header">
@@ -82,7 +87,8 @@
         </div>
         <div class="modal-body">
           <div class="mb-3" v-for="field in getService(editingService.Name, 'Fields')">
-            <NotificationField v-bind:field="field" v-bind:options="editingService.Options" />
+            <NotificationField v-bind:isEdit="true" v-bind:field="field"
+              v-bind:ref="field.Name" v-bind:options="editingService.Options" />
           </div>
         </div>
         <div class="modal-footer justify-content-between">
@@ -119,10 +125,13 @@ export default {
     }
   },
   watch: {
-    selectedService () {
+    selectedService (service) {
       for (let key in this.selectedServiceOptions) {
         delete(this.selectedServiceOptions[key])
       }
+      service.Fields.forEach(f => {
+        this.selectedServiceOptions[f.Name] = f.DefaultValue
+      })
     }
   },
   methods: {
@@ -142,6 +151,19 @@ export default {
 
     edit (service) {
       this.editingService = JSON.parse(JSON.stringify(service))
+      let ignored = {}
+      let fields = this.getService(this.editingService.Name, 'Fields')
+      fields.forEach(f => {
+        if (f.Type === 'password') {
+          ignored[f.Name] = true
+        }
+      })
+      this.editingService.Options.$$ignoredFields = ignored
+      for (let key in this.$refs) {
+        if (typeof(this.$refs[key].reset) === 'function') {
+          this.$refs[key].reset()
+        }
+      }
     },
 
     test (service) {
@@ -198,11 +220,17 @@ export default {
     },
 
     submit () {
+      let options = JSON.parse(JSON.stringify(this.editingService.Options))
+      let ignored = options.$$ignoredFields
+      for (let key in ignored) {
+        if (ignored[key] === true) delete(options[key])
+      }
+      delete(options.$$ignoredFields)
       this.loading = true
       this.processErrors()
       http.post(`/apps/${this.$route.params.id}/notification-services`, {
         Name: this.editingService.Name,
-        Options: this.editingService.Options
+        Options: options
       }).then((res) => {
         this.loading = false
         this.$toast().success('Successfully updated service')

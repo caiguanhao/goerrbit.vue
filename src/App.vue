@@ -122,4 +122,10 @@ main > .container {
 .highlighted {
   animation: background-fade-highlight 2.5s ease-out;
 }
+
+.fake-input { /* this prevents autofill */
+  position: absolute;
+  left: -100%;
+  opacity: 0;
+}
 </style>

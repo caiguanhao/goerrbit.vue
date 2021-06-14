@@ -13,8 +13,17 @@ export default {
     },
 
     processErrors (err) {
+      let refs = {}
       for (let key in this.$refs) {
-        let elem = this.$refs[key]
+        refs[key] = this.$refs[key]
+        if (refs[key].$refs) {
+          for (let k in refs[key].$refs) {
+            refs[k] = refs[key].$refs[k]
+          }
+        }
+      }
+      for (let key in refs) {
+        let elem = refs[key]
         if (!(elem instanceof Array)) elem = [ elem ]
         elem.forEach((e) => {
           if (e && e.classList) e.classList.remove('is-invalid')
@@ -37,7 +46,7 @@ export default {
         let message = format(field, msg)
         msgs.push(message)
         let key = error.Name
-        let elem = this.$refs[key] || this.$refs['input-' + key]
+        let elem = refs[key] || refs['input-' + key]
         if (elem) {
           if (elem instanceof Array) elem = elem[0]
           let div = elem.nextElementSibling
