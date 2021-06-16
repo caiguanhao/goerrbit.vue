@@ -8,6 +8,14 @@
     v-bind:ref="field.Name"
     v-model="options[field.Name]"
     v-bind:placeholder="field.Placeholder"></textarea>
+  <select class="form-select"
+    v-else-if="field.Type === 'select'"
+    v-bind:ref="field.Name"
+    v-model="options[field.Name]">
+    <option v-for="option in field.Options"
+      v-bind:value="option[0]"
+      v-text="option[1]"></option>
+  </select>
   <input class="form-control" autocomplete="off" type="number"
     v-else-if="field.Type === 'number'"
     v-bind:ref="field.Name"

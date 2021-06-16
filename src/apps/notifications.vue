@@ -28,9 +28,9 @@
         <table class="table small mb-0">
           <tbody>
             <template v-for="field in getService(service.Name, 'Fields')">
-              <tr v-if="service.Options[field.Name]">
+              <tr v-if="optionValueOf(service, field.Name)">
                 <th width="30%" v-text="field.Label"></th>
-                <td class="value" v-text="service.Options[field.Name]"></td>
+                <td class="value" v-text="optionValueOf(service, field.Name)"></td>
               </tr>
             </template>
           </tbody>
@@ -163,6 +163,19 @@ export default {
         if (this.availableServices[i].Name === name) return this.availableServices[i][field]
       }
       return null
+    },
+
+    optionValueOf (service, fieldName) {
+      let fields = this.getService(service.Name, 'Fields') || []
+      let field = fields.find(f => f.Name === fieldName)
+      if (field && field.Type === 'select') {
+        for (let i = 0; i < field.Options.length; i++) {
+          if (field.Options[i][0] === service.Options[fieldName]) {
+            return field.Options[i][1]
+          }
+        }
+      }
+      return service.Options[fieldName]
     },
 
     edit (service) {
