@@ -23,61 +23,7 @@
       <label class="col-sm-2 col-form-label">Fingerprinter</label>
       <div class="col-sm-8" v-if="obj.ActualFingerprinter">
         <div class="form-control-plaintext">
-          <div class="form-check">
-            <label class="form-check-label">
-              <input class="form-check-input" type="checkbox" v-model="customFingerprinter"
-                v-bind:disabled="!currentUser.IsAdmin">
-              <span>Custom Fingerprinter</span>
-            </label>
-          </div>
-          <div class="form-check">
-            <label class="form-check-label">
-              <input class="form-check-input" type="checkbox"
-                v-bind:disabled="!currentUser.IsAdmin || !customFingerprinter"
-                v-model="currentFingerprinter.ErrorClass">
-              <span>Error Class</span>
-            </label>
-          </div>
-          <div class="form-check">
-            <label class="form-check-label">
-              <input class="form-check-input" type="checkbox"
-                v-bind:disabled="!currentUser.IsAdmin || !customFingerprinter"
-                v-model="currentFingerprinter.Message">
-              <span>Message</span>
-            </label>
-          </div>
-          <div class="form-check">
-            <label class="form-check-label">
-              <input class="form-check-input" type="checkbox"
-                v-bind:disabled="!currentUser.IsAdmin || !customFingerprinter"
-                v-model="currentFingerprinter.Component">
-              <span>Component</span>
-            </label>
-          </div>
-          <div class="form-check">
-            <label class="form-check-label">
-              <input class="form-check-input" type="checkbox"
-                v-bind:disabled="!currentUser.IsAdmin || !customFingerprinter"
-                v-model="currentFingerprinter.Action">
-              <span>Action</span>
-            </label>
-          </div>
-          <div class="form-check">
-            <label class="form-check-label">
-              <input class="form-check-input" type="checkbox"
-                v-bind:disabled="!currentUser.IsAdmin || !customFingerprinter"
-                v-model="currentFingerprinter.EnvironmentName">
-              <span>Environment Name</span>
-            </label>
-          </div>
-          <div class="form-check">
-            <div class="input-group input-group-sm backtrace">
-              <span class="input-group-text">Backtrace Lines</span>
-              <input class="form-control" type="number" min="-1" step="1"
-                v-bind:disabled="!currentUser.IsAdmin || !customFingerprinter"
-                v-model.number="currentFingerprinter.BacktraceLines">
-            </div>
-          </div>
+          <Fingerprinter v-bind:obj="obj" />
         </div>
       </div>
     </div>
@@ -92,34 +38,18 @@
 
 <script>
 import http from '../http'
+import Fingerprinter from '../components/fingerprinter.vue'
 
 export default {
   props: {
     obj: Object
   },
+  components: {
+    Fingerprinter
+  },
   data () {
     return {
       loading: false
-    }
-  },
-  computed: {
-    currentFingerprinter () {
-      if (this.obj.Fingerprinter) {
-        return this.obj.Fingerprinter
-      }
-      return this.obj.ActualFingerprinter
-    },
-    customFingerprinter: {
-      get () {
-        return !!this.obj.Fingerprinter
-      },
-      set (val) {
-        if (val) {
-          this.obj.Fingerprinter = JSON.parse(JSON.stringify(this.obj.ActualFingerprinter))
-        } else {
-          this.obj.Fingerprinter = null
-        }
-      }
     }
   },
   methods: {
@@ -180,7 +110,4 @@ export default {
 </script>
 
 <style scoped>
-.backtrace {
-  width: 240px;
-}
 </style>
