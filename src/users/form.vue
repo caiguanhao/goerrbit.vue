@@ -1,5 +1,7 @@
 <template>
   <form v-on:submit.prevent="submit">
+    <input type="text" class="fake-input">
+    <input type="password" class="fake-input">
     <div class="mb-3 row">
       <label class="col-sm-2 col-form-label">Name</label>
       <div class="col-sm-8">
