@@ -58,7 +58,7 @@
                 v-text="service.Name"></option>
             </select>
             <div class="mt-2 text-muted" v-if="selectedService && selectedService.Description">
-              <small v-text="selectedService.Description"></small>
+              <small v-SimpleHtml="selectedService.Description"></small>
             </div>
           </div>
           <div class="mb-2" v-if="selectedService && relatedApps.length">
@@ -94,7 +94,10 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <div class="mb-3" v-for="field in getService(editingService.Name, 'Fields')">
+          <div class="mb-2 text-muted" v-if="serviceEditing.Description">
+            <small v-SimpleHtml="serviceEditing.Description"></small>
+          </div>
+          <div class="mb-3" v-for="field in serviceEditing.Fields">
             <NotificationField v-bind:isEdit="true" v-bind:field="field"
               v-bind:ref="field.Name" v-bind:options="editingService.Options" />
           </div>
@@ -116,11 +119,15 @@ import http from '../http'
 import Nav from './nav.vue'
 import { Modal } from 'bootstrap'
 import NotificationField from '../components/notification-field.vue'
+import SimpleHtml from '../components/simple-html.vue'
 
 export default {
   components: {
     Nav,
     NotificationField
+  },
+  directives: {
+    SimpleHtml
   },
   data () {
     return {
@@ -130,6 +137,7 @@ export default {
       services: [],
       availableServices: [],
       editingService: null,
+      serviceEditing: null,
       relatedApps: [],
       selectedRelatedAppId: null
     }
@@ -160,7 +168,12 @@ export default {
 
     getService (name, field) {
       for (let i = 0; i < this.availableServices.length; i++) {
-        if (this.availableServices[i].Name === name) return this.availableServices[i][field]
+        if (this.availableServices[i].Name === name) {
+          if (field) {
+            return this.availableServices[i][field]
+          }
+          return this.availableServices[i]
+        }
       }
       return null
     },
@@ -180,8 +193,9 @@ export default {
 
     edit (service) {
       this.editingService = JSON.parse(JSON.stringify(service))
+      this.serviceEditing = this.getService(this.editingService.Name)
       let ignored = {}
-      let fields = this.getService(this.editingService.Name, 'Fields')
+      let fields = this.serviceEditing.Fields
       fields.forEach(f => {
         if (f.Type === 'password') {
           ignored[f.Name] = true
