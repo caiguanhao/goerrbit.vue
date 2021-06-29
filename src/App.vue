@@ -81,7 +81,7 @@ export default {
         let node = el.nodeName
         if (node === 'A' || node === 'BUTTON' || node === 'INPUT') return
         if (el.classList && el.classList.contains('clickable-row')) {
-          let elem = el.querySelector('a.clickable-row-target') || el.querySelector('input[type=checkbox]') || el.querySelector('a')
+          let elem = el.querySelector('.clickable-row-target') || el.querySelector('input[type=checkbox]') || el.querySelector('a')
           if (elem) elem.click()
           return
         }

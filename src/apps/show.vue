@@ -12,9 +12,14 @@
     </div>
   </div>
   <ProblemsHeader />
-  <Problems v-bind:problems="problems" v-bind:pagination="pagination">
-    <h5 class="mb-3 text-muted">No errors have been caught yet, make sure you set up your app</h5>
-    <pre class="p-3 bg-light border rounded-3 mb-4" v-text="rubyCode"></pre>
+  <Problems v-bind:problems="problems" v-bind:pagination="pagination"
+    v-bind:showingResolved="$route.query.status === 'resolved'"
+    v-on:reload="reload">
+    <h5 class="mb-0 text-muted" v-if="$route.query.status === 'resolved'">No errors have been caught yet</h5>
+    <template v-else>
+      <h5 class="mb-3 text-muted">No errors have been caught yet, make sure you set up your app</h5>
+      <pre class="p-3 bg-light border rounded-3 mb-4" v-text="rubyCode"></pre>
+    </template>
   </Problems>
 </template>
 
@@ -61,6 +66,15 @@ end`
   methods: {
     load () {
       window.lastAppId = this.app.Id
+    },
+    reload () {
+      http.get(`/apps/${this.$route.params.id}/problems`, {
+        params: this.$route.query
+      }).then(res => {
+        this.problems = res.data.Problems
+        this.pagination = res.data.Pagination
+        this.load()
+      })
     }
   },
   beforeRouteEnter (to, from, next) {

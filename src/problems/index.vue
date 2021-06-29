@@ -1,6 +1,9 @@
 <template>
   <ProblemsHeader />
-  <Problems v-bind:problems="problems" v-bind:apps="apps" v-bind:pagination="pagination">
+  <Problems v-bind:problems="problems"
+    v-bind:showingResolved="$route.query.status === 'resolved'"
+    v-bind:apps="apps" v-bind:pagination="pagination"
+    v-on:reload="reload">
     <h5 class="mb-0 text-muted">No errors have been caught yet</h5>
   </Problems>
 </template>
@@ -25,6 +28,15 @@ export default {
   methods: {
     load () {
       window.lastAppId = null
+    },
+    reload () {
+      http.get('/problems', { params: this.$route.query }).then(res => {
+        this.problems = res.data.Problems
+        this.pagination = res.data.Pagination
+        this.apps = res.data.Apps
+        this.query = this.$route.query.query
+        this.load()
+      })
     }
   },
   beforeRouteEnter (to, from, next) {

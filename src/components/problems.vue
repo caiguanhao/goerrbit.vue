@@ -1,13 +1,57 @@
 <template>
+  <div class="d-flex justify-content-center mb-3" v-if="hasUndo">
+    <span class="bg-dark text-white py-2 px-3 rounded-3">
+      <span v-text="`${updated.ids.length} problems marked as ${updated.type === 'resolved' ? 'resolved' : 'unresolved'}.`"></span>
+      <a href class="ms-3 text-white" v-on:click.prevent="undo">Undo</a>
+    </span>
+  </div>
   <template v-if="hasNoProblems">
     <h5 class="mb-0 text-muted" v-if="isSearch">No errors matched your query</h5>
     <template v-else><slot /></template>
   </template>
   <template v-else>
+  <div class="btn-group btn-group-sm">
+    <button type="button" class="btn btn-secondary"
+      v-on:click.prevent="selections.show = !selections.show"
+      v-text="selections.show ? 'Selection: ON' : 'Selection: OFF'"></button>
+    <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split"
+      data-bs-toggle="dropdown" data-bs-reference="parent">
+      <span class="visually-hidden">Toggle Dropdown</span>
+    </button>
+    <ul class="dropdown-menu">
+      <li>
+        <a class="dropdown-item" href
+          v-on:click.prevent="selectAll()">Select All On This Page</a>
+      </li>
+      <li><hr class="dropdown-divider"></li>
+      <li class="d-flex justify-content-between">
+        <h6 class="dropdown-header" v-text="`SELECTED: ${selections.problemIds.length}`"></h6>
+        <a class="small h6 mb-0 py-2 pe-3" href
+          v-if="selections.problemIds.length"
+          v-on:click.prevent="clear()">Clear</a>
+      </li>
+      <li v-if="showingResolved">
+        <a class="dropdown-item" href
+          v-bind:class="{ disabled: !selections.problemIds.length }"
+          v-on:click.prevent="setAsUnresolved()">Mark As Unresolved</a>
+      </li>
+      <li v-else>
+        <a class="dropdown-item" href
+          v-bind:class="{ disabled: !selections.problemIds.length }"
+          v-on:click.prevent="setAsResolved()">Mark As Resolved</a>
+      </li>
+      <li>
+        <a class="dropdown-item" href
+          v-bind:class="selections.problemIds.length ? 'text-danger' : 'disabled'"
+          v-on:click.prevent="remove()">Delete</a>
+      </li>
+    </ul>
+  </div>
   <div class="table-responsive">
     <table class="table">
       <thead>
         <tr>
+          <th width="1%" v-if="selections.show"></th>
           <th width="18%">
             <div v-if="apps">APP</div>
             <div v-else>ENV</div>
@@ -28,7 +72,11 @@
       <tbody>
         <tr v-for="problem in problems" class="clickable-row"
           v-bind:class="{ highlighted: lastProblemId === problem.Id,
-                          resolved: !!problem.ResolvedAt }">
+                          resolved: !showingResolved && !!problem.ResolvedAt }">
+          <td v-if="selections.show">
+            <input type="checkbox" class="clickable-row-target"
+              v-model="selections.problemIds" v-bind:value="problem.Id" />
+          </td>
           <td>
             <div v-if="apps">
               <router-link v-bind:to="{ name: 'RouteAppsShow', params: { id: problem.AppId } }"
@@ -63,6 +111,7 @@
             <a href class="text-primary"
               v-if="!problem.ResolvedAt"
               v-on:click.prevent="resolve(problem)"><faicon icon="thumbs-up" /></a>
+            <small v-else class="text-success fst-italic">(resolved)</small>
           </td>
         </tr>
       </tbody>
@@ -77,20 +126,59 @@ import * as timeago from 'timeago.js'
 import SortButton from './sort-button.vue'
 import Pagination from './pagination.vue'
 import http from '../http'
+import { reactive } from 'vue'
+
+const selections = reactive({
+  show: false,
+  problemIds: []
+})
 
 export default {
   props: {
     apps: Array,
     problems: Array,
-    pagination: Object
+    pagination: Object,
+    showingResolved: {
+      type: Boolean,
+      default: false
+    }
   },
+  emits: [
+    'reload'
+  ],
   components: {
     Pagination,
     SortButton
   },
   data () {
     return {
-      lastProblemId: null
+      lastProblemId: null,
+      updated: {
+        ids: [],
+        type: null
+      },
+      toUpdate: {
+        ids: [],
+        type: null
+      },
+      selections
+    }
+  },
+  watch: {
+    problems () {
+      this.lastProblemId = window.lastProblemId
+      window.lastProblemId = null
+
+      let ids = this.problems.map(p => p.Id)
+      let allOK = selections.problemIds.every(id => ids.indexOf(id) > -1)
+      if (!allOK) {
+        selections.problemIds = []
+      }
+
+      this.updated.ids = this.toUpdate.ids
+      this.updated.type = this.toUpdate.type
+      this.toUpdate.ids = []
+      this.toUpdate.type = null
     }
   },
   computed: {
@@ -109,6 +197,16 @@ export default {
     },
     hasNoProblems () {
       return this.pagination.TotalCount === 0
+    },
+    hasUndo () {
+      if (!this.updated) return false
+      let type = this.updated.type
+      let ids = this.updated.ids
+      if (!type || !ids || !ids.length) return false
+      if (type === 'resolved' || type === 'unresolved') {
+        return true
+      }
+      return false
     }
   },
   methods: {
@@ -127,11 +225,78 @@ export default {
           this.$toast().error('Error resolving issue')
         }
       })
+    },
+    selectAll () {
+      selections.show = true
+      selections.problemIds = this.problems.map(p => p.Id)
+    },
+    clear () {
+      selections.show = true
+      selections.problemIds = []
+    },
+    setAsResolved (ids = null, fromUndo = false) {
+      http.post('/problems/resolve', {
+        ids: ids || selections.problemIds
+      }).then(res => {
+        this.$emit('reload')
+        if (fromUndo) {
+          this.toUpdate.ids = []
+          this.toUpdate.type = null
+        } else {
+          this.toUpdate.ids = res.data.Changed
+          this.toUpdate.type = 'resolved'
+        }
+      }, (error) => {
+        if (!error || !error.toastShown) {
+          this.$toast().error('Error resolving issues')
+        }
+      })
+    },
+    setAsUnresolved (ids = null, fromUndo = false) {
+      http.post('/problems/unresolve', {
+        ids: ids || selections.problemIds
+      }).then(res => {
+        this.$emit('reload')
+        if (fromUndo) {
+          this.toUpdate.ids = []
+          this.toUpdate.type = null
+        } else {
+          this.toUpdate.ids = res.data.Changed
+          this.toUpdate.type = 'unresolved'
+        }
+      }, (error) => {
+        if (!error || !error.toastShown) {
+          this.$toast().error('Error unresolving issues')
+        }
+      })
+    },
+    undo () {
+      if (!this.hasUndo) return
+      let type = this.updated.type
+      let ids = this.updated.ids
+      if (type === 'resolved') {
+        this.setAsUnresolved(ids, true)
+      } else if (type === 'unresolved') {
+        this.setAsResolved(ids, true)
+      } else {
+        this.$toast().error('Error')
+      }
+    },
+    remove () {
+      if (!window.confirm('Permanently delete selected issues? This action CANNOT be undone.')) return
+      http.delete('/problems', {
+        data: {
+          ids: selections.problemIds
+        }
+      }).then(res => {
+        this.$emit('reload')
+        this.$toast().success('Successfully deleted issues')
+      }, (error) => {
+        if (!error || !error.toastShown) {
+          this.$toast().error('Error deleting issues')
+        }
+      })
     }
-  },
-  created () {
-    this.lastProblemId = window.lastProblemId
-    window.lastProblemId = null
   }
 }
 </script>
