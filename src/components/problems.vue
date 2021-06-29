@@ -74,7 +74,7 @@
           v-bind:class="{ highlighted: lastProblemId === problem.Id,
                           resolved: !showingResolved && !!problem.ResolvedAt }">
           <td v-if="selections.show">
-            <input type="checkbox" class="clickable-row-target"
+            <input type="checkbox" class="clickable-row-target shift-key-select"
               v-model="selections.problemIds" v-bind:value="problem.Id" />
           </td>
           <td>
@@ -126,11 +126,22 @@ import * as timeago from 'timeago.js'
 import SortButton from './sort-button.vue'
 import Pagination from './pagination.vue'
 import http from '../http'
-import { reactive } from 'vue'
+import { reactive, watch } from 'vue'
+
+let show = window.sessionStorage ? window.sessionStorage.getItem('selections.show') === '1' : false
 
 const selections = reactive({
-  show: false,
+  show,
   problemIds: []
+})
+
+watch(() => selections.show, (val) => {
+  if (!window.sessionStorage) return
+  if (val) {
+    window.sessionStorage.setItem('selections.show', '1')
+  } else {
+    window.sessionStorage.removeItem('selections.show')
+  }
 })
 
 export default {

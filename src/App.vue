@@ -74,21 +74,56 @@ export default {
     }
   },
   created () {
+    let lastElem = null
     document.addEventListener('click', (e) => {
-      if (window.getSelection().toString().length) return
+      if (!e.isTrusted) return
+      let defer = () => lastElem = null
+      if (window.getSelection().toString().length) {
+        if (!e.shiftKey) {
+          return defer()
+        }
+      }
       let el = e.target
       while (el) {
         let node = el.nodeName
-        if (node === 'A' || node === 'BUTTON' || node === 'INPUT') return
+        if (node === 'A' || node === 'BUTTON' || node === 'INPUT') {
+          if (e.shiftKey && clickBetween(lastElem, el)) return defer()
+          lastElem = el
+          return
+        }
         if (el.classList && el.classList.contains('clickable-row')) {
-          let elem = el.querySelector('.clickable-row-target') || el.querySelector('input[type=checkbox]') || el.querySelector('a')
+          let elem = el.querySelector('.clickable-row-target') ||
+            el.querySelector('input[type=checkbox]') ||
+            el.querySelector('a')
           if (elem) elem.click()
+          if (e.shiftKey && clickBetween(lastElem, elem)) return defer()
+          lastElem = elem
           return
         }
         el = el.parentNode
       }
+      return defer()
     })
   }
+}
+
+function clickBetween (a, b) {
+  if (!a || !a.classList.contains('shift-key-select')) return false
+  if (!b || !b.classList.contains('shift-key-select')) return false
+  let selection = window.getSelection()
+  if (selection.empty) selection.empty()
+  else if (selection.removeAllRanges) selection.removeAllRanges()
+  let all = document.querySelectorAll('.shift-key-select')
+  let inRange = false
+  for (let i = 0; i < all.length; i++) {
+    if (all[i] === a || all[i] === b) {
+      inRange = !inRange
+      if (inRange) continue
+      else break
+    }
+    if (inRange) setTimeout(() => all[i].click())
+  }
+  return true
 }
 </script>
 
