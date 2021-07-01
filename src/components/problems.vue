@@ -43,6 +43,16 @@
       <li>
         <a class="dropdown-item" href
           v-bind:class="selections.problemIds.length ? 'text-danger' : 'disabled'"
+          v-on:click.prevent="merge()">Merge</a>
+      </li>
+      <li>
+        <a class="dropdown-item" href
+          v-bind:class="selections.problemIds.length ? 'text-danger' : 'disabled'"
+          v-on:click.prevent="unmerge()">Unmerge</a>
+      </li>
+      <li>
+        <a class="dropdown-item" href
+          v-bind:class="selections.problemIds.length ? 'text-danger' : 'disabled'"
           v-on:click.prevent="remove()">Delete</a>
       </li>
     </ul>
@@ -292,6 +302,33 @@ export default {
       } else {
         this.$toast().error('Error')
       }
+    },
+    merge () {
+      if (!window.confirm('Merge selected issues?')) return
+      http.post('/problems/merge', {
+        ids: selections.problemIds
+      }).then(res => {
+        this.$emit('reload')
+        this.$toast().success('Successfully merged issues')
+      }, (error) => {
+        if (!error || !error.toastShown) {
+          this.$toast().error('Error merging issues')
+        }
+      })
+    },
+    unmerge () {
+      if (!window.confirm('Unmerge selected issues?')) return
+      http.post('/problems/unmerge', {
+        ids: selections.problemIds
+      }).then(res => {
+        selections.problemIds = []
+        this.$emit('reload')
+        this.$toast().success('Successfully unmerged issues')
+      }, (error) => {
+        if (!error || !error.toastShown) {
+          this.$toast().error('Error unmerging issues')
+        }
+      })
     },
     remove () {
       if (!window.confirm('Permanently delete selected issues? This action CANNOT be undone.')) return

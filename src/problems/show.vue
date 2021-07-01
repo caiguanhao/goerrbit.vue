@@ -282,7 +282,7 @@ export default {
           vm.notice = res.data.Notice
           vm.load()
         })
-      })
+      }, next)
     }, next)
   },
   beforeRouteUpdate (to, from, next) {
@@ -303,7 +303,7 @@ export default {
         this.notice = res.data.Notice
         this.load()
         next()
-      })
+      }, next)
     }, next)
   }
 }
