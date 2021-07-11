@@ -1,5 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
+import NProgress from 'nprogress'
+import 'nprogress/nprogress.css'
+
 import RouteApps from './apps/index.vue'
 import RouteAppsShow from './apps/show.vue'
 import RouteAppsNew from './apps/new.vue'
@@ -12,6 +15,8 @@ import RouteUsersNew from './users/new.vue'
 import RouteUsersEdit from './users/edit.vue'
 import RouteSignIn from './sessions/sign-in.vue'
 import RouteError from './errors/index.vue'
+
+NProgress.configure({ showSpinner: false })
 
 const router = createRouter({
   scrollBehavior (to, from, savedPosition) {
@@ -57,6 +62,7 @@ router.setVM = (vm) => {
 }
 
 router.beforeEach((to, from, next) => {
+  NProgress.start()
   if (to.name === 'RouteError') return next()
   router.$lastRoute = to
   if (router.$vm) {
@@ -70,6 +76,10 @@ router.beforeEach((to, from, next) => {
     return
   }
   next()
+})
+
+router.afterEach(() => {
+  NProgress.done()
 })
 
 router.onError((err) => {
