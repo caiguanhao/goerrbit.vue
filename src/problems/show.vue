@@ -29,9 +29,9 @@
     </div>
   </div>
 
-  <h3 v-text="notice.Message"></h3>
-  <div class="d-flex mb-4">
-    <template v-if="nav && !(nav.Older === null && nav.Newer === null)">
+  <h3 class="text-break" v-text="notice.Message"></h3>
+  <div class="d-sm-flex mb-4">
+    <div class="d-flex justify-content-between" v-if="nav && !(nav.Older === null && nav.Newer === null)">
       <div class="me-3">
         <span v-if="nav.Older === null">← Older</span>
         <router-link v-else v-bind:to="{ name: 'RouteNoticesShow',
@@ -42,7 +42,7 @@
         <router-link v-else v-bind:to="{ name: 'RouteNoticesShow',
           params: { id: app.Id, pid: problem.Id, nid: nav.Newer } }">Newer →</router-link>
       </div>
-    </template>
+    </div>
     <div>
       viewing occurrence <span v-if="nav && nav.Number" v-text="nav.Number"></span> of <span v-text="problem.NoticesCount"></span>
     </div>
@@ -87,7 +87,7 @@
                   <tbody>
                     <tr v-for="item in problem.Messages">
                       <td class="pe-3" v-text="item.Percent"></td>
-                      <td class="fw-bold" v-text="item.Value"></td>
+                      <td class="fw-bold text-break" v-text="item.Value"></td>
                     </tr>
                   </tbody>
                 </table>
@@ -190,8 +190,10 @@
         <table class="table table-bordered">
           <tbody>
             <tr v-for="(value, key) in notice.EnvVars">
-              <th v-text="key"></th>
-              <td v-text="value"></td>
+              <th class="env-key" v-text="key"></th>
+              <td>
+                <div v-text="value" class="env-value text-break"></div>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -312,5 +314,15 @@ export default {
 <style scoped>
 .nav-link {
   transition: none;
+}
+
+.env-key {
+  width: 20%;
+}
+
+.env-value {
+  width: 0;
+  min-width: 100%;
+  max-width: 100%;
 }
 </style>

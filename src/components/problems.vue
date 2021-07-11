@@ -88,11 +88,11 @@
               v-model="selections.problemIds" v-bind:value="problem.Id" />
           </td>
           <td>
-            <div v-if="apps">
+            <div class="d-flex align-items-end" v-if="apps">
               <router-link v-bind:to="{ name: 'RouteAppsShow', params: { id: problem.AppId } }"
-                v-text="appNames[problem.AppId]">
+                class="app-name" v-text="appNames[problem.AppId]">
               </router-link>
-              <small class="ms-2">
+              <small class="ms-1">
                 <router-link v-bind:to="{ query: { environment: problem.Environment } }"
                   class="small" v-text="problem.Environment">
                 </router-link>
@@ -105,9 +105,9 @@
             </div>
           </td>
           <td>
-            <router-link v-bind:to="{ name: 'RouteProblemsShow', params: { id: problem.AppId, pid: problem.Id } }"
-              class="clickable-row-target" v-text="problem.Message"></router-link>
-            <div class="small fst-italic text-muted" v-text="problem.Location"></div>
+              <router-link v-bind:to="{ name: 'RouteProblemsShow', params: { id: problem.AppId, pid: problem.Id } }"
+                class="clickable-row-target message text-break" v-text="problem.Message"></router-link>
+              <div class="small fst-italic text-muted" v-text="problem.Location"></div>
           </td>
           <td>
             <div class="text-nowrap" v-text="timeago(problem.LastNoticeAt)"></div>
@@ -352,5 +352,22 @@ export default {
 <style scoped>
 .resolved {
   opacity: 0.5;
+}
+
+.app-name {
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.message {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  max-width: 100%;
+  width: 0;
+  min-width: 100%;
 }
 </style>

@@ -28,7 +28,7 @@
             <ul class="navbar-nav mb-2 mb-md-0">
               <li class="nav-item">
                 <router-link v-bind:to="{ name: 'RouteUsersEdit', params: { id: currentUser.Id } }"
-                  class="nav-link">
+                  class="nav-link user-name">
                   <faicon class="me-2" icon="crown" title="User is an admin" v-if="currentUser.IsAdmin" />
                   <span v-text="currentUser.Name"></span>
                 </router-link>
@@ -162,5 +162,12 @@ main > .container {
   position: absolute;
   left: -100%;
   opacity: 0;
+}
+
+.user-name {
+  white-space: nowrap;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 </style>

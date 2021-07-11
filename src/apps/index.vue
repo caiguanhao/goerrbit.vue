@@ -36,7 +36,7 @@
           v-bind:class="{ highlighted: lastAppId === app.Id }">
           <td>
             <router-link v-bind:to="{ name: 'RouteAppsShow', params: { id: app.Id } }"
-              v-text="app.Name"></router-link>
+              class="name text-break" v-text="app.Name"></router-link>
           </td>
           <td>
             <router-link v-bind:to="{ name: 'RouteAppsNotifications', params: { id: app.Id } }"
@@ -128,4 +128,13 @@ export default {
 </script>
 
 <style scoped>
+.name {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  max-width: 100%;
+  width: 0;
+  min-width: 100%;
+}
 </style>
