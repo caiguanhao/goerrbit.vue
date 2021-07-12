@@ -51,7 +51,7 @@ const router = createRouter({
     { path: '/sign-in', name: 'RouteSignIn', component: RouteSignIn, meta: { needCurrentUser: false } },
     { path: '/error', name: 'RouteError', component: RouteError },
     { path: '/\n', name: 'RouteBlank', component: RouteBlank },
-    { path: '/:pathMatch(.*)*', component: RouteError }
+    { path: '/:pathMatch(.*)*', name: 'RouteNotFound', component: RouteError }
   ],
 })
 
@@ -80,8 +80,28 @@ router.beforeEach((to, from, next) => {
   next()
 })
 
-router.afterEach(() => {
+router.afterEach((to) => {
   NProgress.done()
+  setTimeout(() => {
+    let title = router.$vm ? router.$vm.$t('titles.Default', null) : null
+    outer:
+    for (let i = 0; i < to.matched.length; i++) {
+      if (!to.name) break
+      let route = to.matched[i]
+      for (let key in route.instances) {
+        let vm = route.instances[key]
+        if (!vm) break
+        let t = vm.$t(`titles.${to.name}`, null)
+        if (t !== null) {
+          if (typeof(t) === 'function') t = t(vm)
+          title = t
+          break outer
+        }
+      }
+    }
+    if (typeof(title) === 'function') title = title(router.$vm)
+    document.title = title
+  })
 })
 
 router.onError((err) => {

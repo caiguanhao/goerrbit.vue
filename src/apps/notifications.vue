@@ -132,6 +132,7 @@ export default {
   data () {
     return {
       loading: false,
+      app: {},
       selectedService: null,
       selectedServiceOptions: {},
       services: [],
@@ -333,22 +334,26 @@ export default {
   },
   beforeRouteEnter (to, from, next) {
     Promise.all([
+      http.get(`/apps/${to.params.id}`),
       http.get('/notification-services'),
       http.get(`/apps/${to.params.id}/notification-services`)
     ]).then(res => {
       next(vm => {
-        vm.availableServices = res[0].data.NotificatinonServices
-        vm.services = res[1].data.NotificatinonServices
+        vm.app = res[0].data.App
+        vm.availableServices = res[1].data.NotificatinonServices
+        vm.services = res[2].data.NotificatinonServices
       })
     }, next)
   },
   beforeRouteUpdate (to, from, next) {
     Promise.all([
+      http.get(`/apps/${to.params.id}`),
       http.get('/notification-services'),
       http.get(`/apps/${to.params.id}/notification-services`)
     ]).then(res => {
-      this.availableServices = res[0].data.NotificatinonServices
-      this.services = res[1].data.NotificatinonServices
+      this.app = res[0].data.App
+      this.availableServices = res[1].data.NotificatinonServices
+      this.services = res[2].data.NotificatinonServices
       next()
     }, next)
   },
