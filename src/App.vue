@@ -51,7 +51,9 @@
 
   <footer class="footer mt-auto py-3 bg-light">
     <div class="container">
-      <span class="text-muted"><a href="https://github.com/caiguanhao/goerrbit" target="_blank">goerrbit</a></span>
+      <a class="text-muted text-decoration-none small"
+        href="https://github.com/caiguanhao/goerrbit"
+        target="_blank" v-text="name"></a>
     </div>
   </footer>
 </template>
@@ -60,6 +62,14 @@
 import http from './http'
 
 export default {
+  computed: {
+    name () {
+      if (http.apiVersion.value) {
+        return `goerrbit ${http.apiVersion.value}`
+      }
+      return 'goerrbit'
+    }
+  },
   methods: {
     signOut () {
       http.post('/sign-out').then(res => {
