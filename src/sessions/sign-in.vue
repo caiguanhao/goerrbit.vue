@@ -50,7 +50,8 @@ export default {
           if (window.localStorage) window.localStorage.removeItem('token')
           if (window.sessionStorage) window.sessionStorage.setItem('token', res.data.Token)
         }
-        this.$router.push({ name: 'RouteHome' }).then(() => {
+        let loc = this.$route.query.redirect || { name: 'RouteHome' }
+        this.$router.push(loc).then(() => {
           this.$toast().success('Successfully signed in')
         })
       }, (e) => {

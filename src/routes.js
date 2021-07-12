@@ -15,6 +15,7 @@ import RouteUsersNew from './users/new.vue'
 import RouteUsersEdit from './users/edit.vue'
 import RouteSignIn from './sessions/sign-in.vue'
 import RouteError from './errors/index.vue'
+import RouteBlank from './errors/blank.vue'
 
 NProgress.configure({ showSpinner: false })
 
@@ -49,6 +50,7 @@ const router = createRouter({
     { path: '/users/:id/edit', name: 'RouteUsersEdit', component: RouteUsersEdit },
     { path: '/sign-in', name: 'RouteSignIn', component: RouteSignIn, meta: { needCurrentUser: false } },
     { path: '/error', name: 'RouteError', component: RouteError },
+    { path: '/\n', name: 'RouteBlank', component: RouteBlank },
     { path: '/:pathMatch(.*)*', component: RouteError }
   ],
 })
@@ -63,7 +65,7 @@ router.setVM = (vm) => {
 
 router.beforeEach((to, from, next) => {
   NProgress.start()
-  if (to.name === 'RouteError') return next()
+  if (to.name === 'RouteError' || to.name === 'RouteBlank') return next()
   router.$lastRoute = to
   if (router.$vm) {
     router.$vm.getCurrentUser().then(() => {
@@ -88,7 +90,9 @@ router.onError((err) => {
     status = err.response.status
   }
   if (status === 401) {
-    router.push({ name: 'RouteSignIn' })
+    let redirect = router.$lastRoute ? router.$lastRoute.fullPath : undefined
+    if (redirect === '/') redirect = undefined
+    router.push({ name: 'RouteSignIn', query: { redirect } })
   } else {
     router.$lastError = err
     router.push({ name: 'RouteError' })

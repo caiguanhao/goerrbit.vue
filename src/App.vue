@@ -65,7 +65,9 @@ export default {
       http.post('/sign-out').then(res => {
         if (window.sessionStorage) window.sessionStorage.removeItem('token')
         if (window.localStorage) window.localStorage.removeItem('token')
-        this.$router.push({ name: 'RouteSignIn' }).then(() => {
+        let redirect = this.$route.fullPath
+        if (redirect === '/') redirect = undefined
+        this.$router.push({ name: 'RouteSignIn', query: { redirect } }).then(() => {
           this.$toast().success('Successfully signed out')
         })
       }, () => {
@@ -78,6 +80,7 @@ export default {
     document.addEventListener('click', (e) => {
       if (!e.isTrusted) return
       let defer = () => lastElem = null
+      // don't click the row if text is selected before mouse button is released
       if (window.getSelection().toString().length) {
         if (!e.shiftKey) {
           return defer()
@@ -87,6 +90,17 @@ export default {
       while (el) {
         let node = el.nodeName
         if (node === 'A' || node === 'BUTTON' || node === 'INPUT') {
+          if (node === 'A') {
+            let path = el.pathname + el.search
+            if (this.$route.fullPath === path) { // "reload" if clicking the same route
+              this.$router.replace({
+                name: 'RouteBlank'
+              }).then(() => {
+                this.$router.replace(path)
+              })
+            }
+            return
+          }
           if (e.shiftKey && clickBetween(lastElem, el)) return defer()
           lastElem = el
           return
@@ -95,7 +109,8 @@ export default {
           let elem = el.querySelector('.clickable-row-target') ||
             el.querySelector('input[type=checkbox]') ||
             el.querySelector('a')
-          if (elem) elem.click()
+          if (elem) elem.click() // click link or checkbox if row is clicked
+          // if shift key is pressed, click checkboxes between two rows
           if (e.shiftKey && clickBetween(lastElem, elem)) return defer()
           lastElem = elem
           return
