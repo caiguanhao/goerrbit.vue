@@ -2,7 +2,7 @@
   <ul class="pagination justify-content-center">
     <li class="page-item" v-bind:class="{ disabled: !pagination.PrevPage }">
       <router-link v-if="pagination.PrevPage" class="page-link"
-        v-bind:to="{ query: queryForPage(pagination.PrevPage) }">Previous</router-link>
+        v-bind:to="{ hash, query: queryForPage(pagination.PrevPage) }">Previous</router-link>
       <span class="page-link" v-else>Previous</span>
     </li>
     <li class="page-item"
@@ -13,12 +13,12 @@
       }">
       <span class="page-link" v-if="isNaN(page)" v-text="page"></span>
       <router-link class="page-link" v-else
-        v-bind:to="{ query: queryForPage(page) }"
+        v-bind:to="{ hash, query: queryForPage(page) }"
         v-text="page"></router-link>
     </li>
     <li class="page-item" v-bind:class="{ disabled: !pagination.NextPage }">
       <router-link v-if="pagination.NextPage" class="page-link"
-        v-bind:to="{ query: queryForPage(pagination.NextPage) }">Next</router-link>
+        v-bind:to="{ hash, query: queryForPage(pagination.NextPage) }">Next</router-link>
       <span class="page-link" v-else>Next</span>
     </li>
   </ul>
@@ -27,7 +27,8 @@
 <script>
 export default {
   props: {
-    pagination: Object
+    pagination: Object,
+    hash: String
   },
   computed: {
     pages () {

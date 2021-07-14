@@ -14,4 +14,5 @@ export default {
   string_required: p => `must not be blank`,
   string_wrong: p => `wrong name or password`,
   string_deleted: p => `user has been deleted`,
+  string_duplicate: p => `duplicate content`,
 }

@@ -75,7 +75,7 @@
     </li>
   </ul>
 
-  <div class="tab-content">
+  <div class="tab-content mb-5">
     <div class="tab-pane show active" id="page-summary">
       <div class="table-responsive">
         <table class="table table-bordered">
@@ -208,17 +208,30 @@
       <pre class="p-3 bg-light border rounded-3 mb-4" v-text="notice.Session"></pre>
     </div>
   </div>
+
+  <Comments v-bind:commentsResponse="commentsResponse" v-bind:appId="app.Id" v-bind:problemId="problem.Id" />
 </template>
 
 <script>
 import * as timeago from 'timeago.js'
 import http from '../http'
+import Comments from '../components/comments.vue'
 
-function makeRequests (params) {
+function getCommnents (to) {
+  return http.get(`/apps/${to.params.id}/problems/${to.params.pid}/comments`, {
+    params: to.query
+  }).then(res => {
+    res.data.$$reload = () => getCommnents(to)
+    return res
+  })
+}
+
+function makeRequests (to) {
   return Promise.all([
-    http.get(`/apps/${params.id}`),
-    http.get(`/apps/${params.id}/problems/${params.pid}`),
-    params.nid ? http.get(`/apps/${params.id}/problems/${params.pid}/notices/${params.nid}`) : Promise.resolve()
+    http.get(`/apps/${to.params.id}`),
+    http.get(`/apps/${to.params.id}/problems/${to.params.pid}`),
+    to.params.nid ? http.get(`/apps/${to.params.id}/problems/${to.params.pid}/notices/${to.params.nid}`) : Promise.resolve(),
+    getCommnents(to)
   ])
 }
 
@@ -228,8 +241,12 @@ export default {
       app: {},
       problem: {},
       notice: {},
+      commentsResponse: {},
       nav: null
     }
+  },
+  components: {
+    Comments
   },
   computed: {
     hasUserAttributes () {
@@ -240,8 +257,10 @@ export default {
     }
   },
   methods: {
-    load () {
-      this.getNav()
+    load (route, noChange) {
+      if (noChange !== true) {
+        this.getNav()
+      }
       window.lastProblemId = this.problem.Id
       window.lastAppId = this.app.Id
     },
@@ -265,15 +284,17 @@ export default {
     }
   },
   beforeRouteEnter (to, from, next) {
-    makeRequests(to.params).then(res => {
+    makeRequests(to).then(res => {
       const app = res[0].data.App
       const problem = res[1].data.Problem
+      const commentsResponse = res[3].data
       if (res[2]) {
         next(vm => {
           vm.app = app
           vm.problem = problem
           vm.notice = res[2].data.Notice
-          vm.load()
+          vm.commentsResponse = commentsResponse
+          vm.load(to)
         })
         return
       }
@@ -282,20 +303,35 @@ export default {
           vm.app = app
           vm.problem = problem
           vm.notice = res.data.Notice
-          vm.load()
+          vm.commentsResponse = commentsResponse
+          vm.load(to)
         })
       }, next)
     }, next)
   },
   beforeRouteUpdate (to, from, next) {
-    makeRequests(to.params).then(res => {
+    function withoutPage (path) {
+      return path.replace(/[?&]?page=\d+/, '')
+    }
+    // get comments only if only page query changed
+    if (withoutPage(to.fullPath) === withoutPage(from.fullPath)) {
+      getCommnents(to).then(res => {
+        this.commentsResponse = res.data
+        this.load(to, true)
+        next()
+      }, next)
+      return
+    }
+    makeRequests(to).then(res => {
       const app = res[0].data.App
       const problem = res[1].data.Problem
+      const commentsResponse = res[3].data
       if (res[2]) {
         this.app = app
         this.problem = problem
         this.notice = res[2].data.Notice
-        this.load()
+        this.commentsResponse = commentsResponse
+        this.load(to)
         next()
         return
       }
@@ -303,7 +339,8 @@ export default {
         this.app = app
         this.problem = problem
         this.notice = res.data.Notice
-        this.load()
+        this.commentsResponse = commentsResponse
+        this.load(to)
         next()
       }, next)
     }, next)

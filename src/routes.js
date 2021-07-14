@@ -21,7 +21,9 @@ NProgress.configure({ showSpinner: false })
 
 const router = createRouter({
   scrollBehavior (to, from, savedPosition) {
-    if (savedPosition) {
+    if (to.hash) {
+      return { el: to.hash }
+    } else if (savedPosition) {
       return savedPosition
     } else {
       return { top: 0 }

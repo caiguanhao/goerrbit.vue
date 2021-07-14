@@ -101,7 +101,7 @@ export default {
         let node = el.nodeName
         if (node === 'A' || node === 'BUTTON' || node === 'INPUT') {
           if (node === 'A' && el.getAttribute('href')) {
-            let path = el.pathname + el.search
+            let path = el.pathname + el.search + el.hash
             if (this.$route.fullPath === path) { // "reload" if clicking the same route
               this.$router.replace({
                 name: 'RouteBlank'
