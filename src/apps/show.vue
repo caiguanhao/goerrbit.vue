@@ -12,7 +12,8 @@
     </div>
   </div>
   <ProblemsHeader />
-  <Problems v-bind:problems="problems" v-bind:pagination="pagination"
+  <Problems
+    v-bind:response="response"
     v-bind:showingResolved="$route.query.status === 'resolved'"
     v-on:reload="reload">
     <h5 class="mb-0 text-muted" v-if="$route.query.status === 'resolved'">No errors have been caught yet</h5>
@@ -36,8 +37,7 @@ export default {
   data () {
     return {
       app: {},
-      problems: [],
-      pagination: {}
+      response: {}
     }
   },
   computed: {
@@ -71,8 +71,7 @@ end`
       http.get(`/apps/${this.$route.params.id}/problems`, {
         params: this.$route.query
       }).then(res => {
-        this.problems = res.data.Problems
-        this.pagination = res.data.Pagination
+        this.response = res.data
         this.load()
       })
     }
@@ -84,8 +83,7 @@ end`
     ]).then(res => {
       next(vm => {
         vm.app = res[0].data.App
-        vm.problems = res[1].data.Problems
-        vm.pagination = res[1].data.Pagination
+        vm.response = res[1].data
         vm.load()
       })
     }, next)
@@ -96,8 +94,7 @@ end`
       http.get(`/apps/${to.params.id}/problems`, { params: to.query })
     ]).then(res => {
       this.app = res[0].data.App
-      this.problems = res[1].data.Problems
-      this.pagination = res[1].data.Pagination
+      this.response = res[1].data
       this.load()
       next()
     }, next)

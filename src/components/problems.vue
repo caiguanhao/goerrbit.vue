@@ -105,9 +105,14 @@
             </div>
           </td>
           <td>
-              <router-link v-bind:to="{ name: 'RouteProblemsShow', params: { id: problem.AppId, pid: problem.Id } }"
-                class="clickable-row-target message text-break" v-text="problem.Message"></router-link>
-              <div class="small fst-italic text-muted" v-text="problem.Location"></div>
+            <router-link v-bind:to="{ name: 'RouteProblemsShow', params: { id: problem.AppId, pid: problem.Id } }"
+              class="clickable-row-target message text-break" v-text="problem.Message || '(empty)'"></router-link>
+            <div class="small fst-italic text-muted" v-if="problem.Location" v-text="problem.Location"></div>
+            <router-link v-bind:to="{ name: 'RouteProblemsShow', params: { id: problem.AppId, pid: problem.Id }, hash: '#comments' }"
+              class="comment-btn" v-if="commentFor(problem.Id)">
+              <strong v-text="commentFor(problem.Id).UserName + ':'"></strong>
+              <span class="ms-2" v-text="commentFor(problem.Id).Body"></span>
+            </router-link>
           </td>
           <td>
             <div class="text-nowrap" v-text="timeago(problem.LastNoticeAt)"></div>
@@ -156,9 +161,7 @@ watch(() => selections.show, (val) => {
 
 export default {
   props: {
-    apps: Array,
-    problems: Array,
-    pagination: Object,
+    response: Object,
     showingResolved: {
       type: Boolean,
       default: false
@@ -203,10 +206,11 @@ export default {
     }
   },
   computed: {
+    apps ()       { return this.response.Apps || []       },
+    comments ()   { return this.response.Comments || []   },
+    problems ()   { return this.response.Problems || []   },
+    pagination () { return this.response.Pagination || {} },
     appNames () {
-      if (!this.apps) {
-        return null
-      }
       let map = {}
       for (let i = 0; i < this.apps.length; i++) {
         map[this.apps[i].Id] = this.apps[i].Name
@@ -231,6 +235,9 @@ export default {
     }
   },
   methods: {
+    commentFor (problemId) {
+      return this.comments.find(c => c.ProblemId === problemId)
+    },
     timeago (time) {
       return timeago.format(time)
     },
@@ -369,5 +376,25 @@ export default {
   max-width: 100%;
   width: 0;
   min-width: 100%;
+}
+
+.comment-btn {
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 3px 6px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background: #f9f9f9;
+  font-size: 12px;
+  color: #000;
+  text-decoration: none;
+  margin: 10px 0 0;
+  max-width: 400px;
+}
+
+.comment-btn:hover {
+  background: #ddd;
 }
 </style>
