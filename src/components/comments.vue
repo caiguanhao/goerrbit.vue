@@ -63,7 +63,7 @@ const observer = (() => {
   if (window.ResizeObserver) {
     return new window.ResizeObserver(entries => {
       for (let entry of entries) {
-        let truncated = entry.target.scrollHeight > entry.contentRect.height
+        let truncated = entry.target.scrollHeight - entry.contentRect.height > 1
         entry.target.classList[truncated ? 'add' : 'remove']('truncated')
       }
     })
