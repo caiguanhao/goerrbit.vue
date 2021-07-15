@@ -12,11 +12,11 @@ import utils from './utils'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import {
   faThumbsUp, faCheckCircle, faCheck, faTimes, faCrown,
-  faCaretUp, faCaretDown, faTrashAlt
+  faCaretUp, faCaretDown, faTrashAlt, faEdit
 } from '@fortawesome/free-solid-svg-icons'
 library.add(
   faThumbsUp, faCheckCircle, faCheck, faTimes, faCrown,
-  faCaretUp, faCaretDown, faTrashAlt
+  faCaretUp, faCaretDown, faTrashAlt, faEdit
 )
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
