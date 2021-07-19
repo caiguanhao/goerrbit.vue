@@ -88,7 +88,7 @@
               v-model="selections.problemIds" v-bind:value="problem.Id" />
           </td>
           <td>
-            <div class="d-flex align-items-end" v-if="apps">
+            <div class="d-flex align-items-end" v-if="apps && apps.length">
               <router-link v-bind:to="{ name: 'RouteAppsShow', params: { id: problem.AppId } }"
                 class="app-name" v-text="appNames[problem.AppId]">
               </router-link>
