@@ -6,7 +6,18 @@
     </span>
   </div>
   <template v-if="hasNoProblems">
-    <h5 class="mb-0 text-muted" v-if="isSearch">No errors matched your query</h5>
+    <div v-if="isSearch">
+      <h5 class="text-muted">No errors matched your query</h5>
+      <div>You can:</div>
+      <ul>
+        <li v-if="hasInComments">
+          Try to <router-link v-bind:to="inComments">not search in comments only</router-link>.
+        </li>
+        <li v-else>
+          Try to <router-link v-bind:to="inComments">search in comments only</router-link>.
+        </li>
+      </ul>
+    </div>
     <template v-else><slot /></template>
   </template>
   <template v-else>
@@ -219,6 +230,17 @@ export default {
     },
     isSearch () {
       return !!this.$route.query.query
+    },
+    hasInComments () {
+      let query = this.$route.query.query || ''
+      return query.indexOf('in:comments') > -1
+    },
+    inComments () {
+      let query = this.$route.query.query || ''
+      if (this.hasInComments) {
+        return { query: { query: query.replace('in:comments', '').trim() } }
+      }
+      return { query: { query: query.trim() + ' in:comments' } }
     },
     hasNoProblems () {
       return this.pagination.TotalCount === 0
