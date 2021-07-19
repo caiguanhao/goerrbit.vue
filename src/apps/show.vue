@@ -1,16 +1,5 @@
 <template>
-  <div class="p-3 bg-light border rounded-3 mb-4 d-sm-flex align-items-center justify-content-between">
-    <div class="mb-3 mb-sm-0">
-      <h4 class="text-break" v-text="app.Name"></h4>
-      <div class="small">
-        <strong>Errors Caught:</strong> <span v-text="app.ProblemsCount"></span>
-        <strong class="ms-3">API Key:</strong> <span v-text="app.ApiKey"></span>
-      </div>
-    </div>
-    <div>
-      <router-link v-bind:to="{ name: 'RouteAppsEdit', params: { id: app.Id } }" class="btn btn-primary">Edit</router-link>
-    </div>
-  </div>
+  <Nav v-bind:app="app" />
   <ProblemsHeader />
   <Problems
     v-bind:response="response"
@@ -26,11 +15,13 @@
 
 <script>
 import http from '../http'
+import Nav from './nav.vue'
 import Problems from '../components/problems.vue'
 import ProblemsHeader from '../components/problems-header.vue'
 
 export default {
   components: {
+    Nav,
     Problems,
     ProblemsHeader
   },

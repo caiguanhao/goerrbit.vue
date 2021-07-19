@@ -1,5 +1,5 @@
 <template>
-  <Nav />
+  <Nav v-bind:app="app" />
   <Form class="col-sm-8" v-bind:obj="app" />
 </template>
 

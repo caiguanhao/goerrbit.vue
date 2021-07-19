@@ -1,5 +1,5 @@
 <template>
-  <Nav />
+  <Nav v-bind:app="app" />
 
   <div class="mb-3">
     <button type="button" class="btn btn-secondary"
