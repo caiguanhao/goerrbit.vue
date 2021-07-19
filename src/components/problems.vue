@@ -360,7 +360,7 @@ export default {
       })
     },
     remove () {
-      if (!window.confirm('Permanently delete selected issues? This action CANNOT be undone.')) return
+      if (!window.confirm('Permanently delete selected issues? Related comments will also be deleted. This action CANNOT be undone.')) return
       http.delete('/problems', {
         data: {
           ids: selections.problemIds
